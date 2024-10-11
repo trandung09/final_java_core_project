@@ -37,6 +37,7 @@ public class Player extends Entity implements EntityActions {
     private int maxManas = 10;
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
+
         super(gamePanel);
 
         this.name = "boy";
@@ -55,24 +56,33 @@ public class Player extends Entity implements EntityActions {
     public void update() {
 
         if (status == PlayerStatus.PLAY) {
+
+            counter.drawCounter++;
+
+            if (counter.drawCounter > 12) {
+
+                counter.drawCounter = 0;
+                // Switch image
+                imageChecker = !imageChecker;
+            }
+
             move();
         }
     }
 
     @Override
-    public void render(Graphics2D g) {
-
-        counter.drawCounter++;
+    public void render(Graphics2D g2d) {
 
         if (image == null) image = defaultImages[6];
 
-        if (counter.drawCounter > 12) {
-            counter.drawCounter = 0;
-
-            image = image == defaultImages[6] ? defaultImages[7] : defaultImages[6];
+        switch (direction) {
+            case UP -> image = imageChecker ? defaultImages[0] : defaultImages[1];
+            case DOWN -> image = imageChecker ? defaultImages[2] : defaultImages[3];
+            case LEFT -> image = imageChecker ? defaultImages[4] : defaultImages[5];
+            case RIGHT -> image = imageChecker ? defaultImages[6] : defaultImages[7];
         }
 
-        g.drawImage(image, screenX, screenY, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE, null);
+        g2d.drawImage(image, screenX, screenY, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE, null);
     }
 
     @Override
@@ -82,20 +92,16 @@ public class Player extends Entity implements EntityActions {
 
            switchDirection();
 
-
            isCollisionOn = false;
 
            if (!isCollisionOn) {
 
-               System.out.println(direction);
                switch (direction) {
                    case UP -> worldY -= speed;
                    case DOWN -> worldY += speed;
                    case LEFT -> worldX -= speed;
                    case RIGHT -> worldX += speed;
                }
-
-               System.out.println(worldX + " " + worldY);
            }
        }
     }
