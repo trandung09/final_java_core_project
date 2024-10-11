@@ -2,6 +2,7 @@ package org.tvd.frame;
 
 import org.tvd.config.FrameConfig;
 import org.tvd.entity.player.Player;
+import org.tvd.environment.EnvironmentManager;
 import org.tvd.event.KeyHandler;
 import org.tvd.map.TileManager;
 import org.tvd.render.RenderUI;
@@ -26,6 +27,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final RenderUI renderUI = new RenderUI(this);
     public final KeyHandler keyHandler = new KeyHandler(this);
     public final TileManager tileManager = new TileManager(this);
+
+    public final EnvironmentManager eManager = new EnvironmentManager(this);
 
     public final Player player  = new Player(this, keyHandler);
 
@@ -83,6 +86,8 @@ public class GamePanel extends JPanel implements Runnable {
         tileManager.render(g2d);
 
         player.render(g2d);
+
+        eManager.render(g2d);
 
         g.dispose();
     }
