@@ -33,6 +33,7 @@ public abstract class Entity {
     protected boolean isDead;
     protected boolean isAlive = true;
     protected boolean isAttacking;
+    protected boolean imageChecker;
 
     protected BufferedImage[] defaultImages = new BufferedImage[8];
     protected BufferedImage[] attackImages = new BufferedImage[64];
@@ -46,7 +47,10 @@ public abstract class Entity {
     protected int solidAreaDefaultY;
 
     public Entity(GamePanel gamePanel) {
+
         this.gamePanel = gamePanel;
+
+        this.detection = new CollisionDetection(gamePanel);
 
         attackArea = new Rectangle(0, 0, 40, 40);
         solidArea = new Rectangle(12, 8, 24, 32);
@@ -55,5 +59,5 @@ public abstract class Entity {
     }
 
     public void update() {}
-    public abstract void render(Graphics2D g);
+    public abstract void render(Graphics2D g2d);
 }
