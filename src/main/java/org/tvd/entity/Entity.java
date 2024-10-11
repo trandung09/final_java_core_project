@@ -31,6 +31,8 @@ public abstract class Entity {
     protected boolean isHpBarOn;
     protected boolean isCollisionOn;
     protected boolean isDead;
+    protected boolean isAlive = true;
+    protected boolean isAttacking;
 
     protected BufferedImage[] defaultImages = new BufferedImage[8];
     protected BufferedImage[] attackImages = new BufferedImage[64];
