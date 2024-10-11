@@ -9,15 +9,15 @@ public class RenderUI {
 
     private final GamePanel gamePanel;
 
-    private Graphics2D graphics2D;
+    private Graphics2D g2d;
 
     public RenderUI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
 
-    public void render(Graphics2D graphics2D) {
+    public void render(Graphics2D g2d) {
 
-        this.graphics2D = graphics2D;
+        this.g2d = g2d;
 
         renderDialogueScreen();
     }
