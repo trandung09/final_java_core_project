@@ -110,7 +110,7 @@ public class TileManager {
         }
     }
 
-    public void render(Graphics2D graphics2D){
+    public void render(Graphics2D g2d){
 
         int row = 0, col = 0, worldX, worldY, screenX, screenY;
 
@@ -123,7 +123,7 @@ public class TileManager {
             screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.getScreenX();
             screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.getScreenY();
 
-            graphics2D.drawImage(tiles[tileIndex].image, screenX, screenY, null);
+            g2d.drawImage(tiles[tileIndex].image, screenX, screenY, null);
 
             col++;
             if (col == FrameConfig.MAX_WORLD_COL) {
