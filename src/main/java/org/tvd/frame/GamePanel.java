@@ -3,6 +3,7 @@ package org.tvd.frame;
 import org.tvd.config.FrameConfig;
 import org.tvd.entity.player.Player;
 import org.tvd.event.KeyHandler;
+import org.tvd.map.TileManager;
 import org.tvd.render.RenderUI;
 import org.tvd.sound.Sound;
 
@@ -21,10 +22,12 @@ public class GamePanel extends JPanel implements Runnable {
     private final Thread gameThread = new Thread(this);
 
     // Object settings
-    public final Player player  = new Player(this);
     public final Sound sound = new Sound();
     public final RenderUI renderUI = new RenderUI(this);
     public final KeyHandler keyHandler = new KeyHandler(this);
+    public final TileManager tileManager = new TileManager(this);
+
+    public final Player player  = new Player(this, keyHandler);
 
     public GamePanel() {
 
@@ -76,6 +79,8 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
+
+        tileManager.render(g2d);
 
         player.render(g2d);
 

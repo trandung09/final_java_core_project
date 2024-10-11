@@ -14,6 +14,8 @@ public class GameFrame extends JFrame {
 
         this.add(gamePanel);
 
+        this.addKeyListener(gamePanel.keyHandler);
+
         this.setResizable(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(new Dimension(FrameConfig.SCREEN_WIDTH, FrameConfig.SCREEN_HEIGHT));
