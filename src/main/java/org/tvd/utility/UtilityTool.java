@@ -14,6 +14,7 @@ public class UtilityTool {
             image = scaleImage(image, width, height);
 
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Error while loading image " + e.getMessage());
         }
         return image;
