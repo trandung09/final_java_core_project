@@ -5,8 +5,10 @@ import lombok.Setter;
 
 import org.tvd.config.EntityConfig;
 import org.tvd.config.FrameConfig;
+import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
+import org.tvd.event.KeyHandler;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Graphics2D;
@@ -14,6 +16,13 @@ import java.awt.Graphics2D;
 @Getter
 @Setter
 public class Player extends Entity implements EntityActions {
+
+    // For camera settings
+    public final int screenX = FrameConfig.SCREEN_WIDTH / 2 - FrameConfig.TILE_SIZE / 2;
+    public final int screenY = FrameConfig.SCREEN_HEIGHT / 2 - FrameConfig.TILE_SIZE;
+
+    // Receive event input
+    private final KeyHandler input;
 
     // Player status
     private PlayerStatus status = PlayerStatus.PLAY;
@@ -25,15 +34,18 @@ public class Player extends Entity implements EntityActions {
     private int energy = 0;
     private int maxEnergy = 100;
     private int manas = 0;
-    private int maxManas = 100;
+    private int maxManas = 10;
 
-    public Player(GamePanel gamePanel) {
+    public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         super(gamePanel);
 
         this.name = "boy";
 
+        this.speed = 5;
         this.worldY = 264;
         this.worldX = 360;
+
+        this.input = keyHandler;
 
         EntityConfig.loadDefaultEntityImage(this);
         EntityConfig.loadAttackEntityImage(this, "none");
@@ -42,13 +54,8 @@ public class Player extends Entity implements EntityActions {
     @Override
     public void update() {
 
-        counter.invincibleCounter++;
-
-        if (counter.invincibleCounter > 50) {
-
-            counter.invincibleCounter = 0;
-
-            worldY += 20;
+        if (status == PlayerStatus.PLAY) {
+            move();
         }
     }
 
@@ -65,7 +72,44 @@ public class Player extends Entity implements EntityActions {
             image = image == defaultImages[6] ? defaultImages[7] : defaultImages[6];
         }
 
-        g.drawImage(image, worldX, worldY, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE, null);
+        g.drawImage(image, screenX, screenY, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE, null);
+    }
+
+    @Override
+    public void move() {
+
+       if (input.pressed.isMovePressed()) {
+
+           switchDirection();
+
+
+           isCollisionOn = false;
+
+           if (!isCollisionOn) {
+
+               System.out.println(direction);
+               switch (direction) {
+                   case UP -> worldY -= speed;
+                   case DOWN -> worldY += speed;
+                   case LEFT -> worldX -= speed;
+                   case RIGHT -> worldX += speed;
+               }
+
+               System.out.println(worldX + " " + worldY);
+           }
+       }
+    }
+
+    private void switchDirection() {
+
+        if (input.pressed.up)
+            direction = Direction.UP;
+        else if (input.pressed.down)
+            direction = Direction.DOWN;
+        else if (input.pressed.left)
+            direction = Direction.LEFT;
+        else if (input.pressed.right)
+            direction = Direction.RIGHT;
     }
 
     @Override
