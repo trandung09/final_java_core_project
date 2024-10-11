@@ -2,10 +2,15 @@ package org.tvd.event;
 
 public class KeyPressed {
 
-    public boolean leftPressed;
-    public boolean rightPressed;
-    public boolean upPressed;
-    public boolean downPressed;
-    public boolean spacePressed;
-    public boolean enterPressed;
+    public boolean left;
+    public boolean right;
+    public boolean up;
+    public boolean down;
+    public boolean space;
+    public boolean enter;
+
+    public boolean isMovePressed() {
+
+        return left || right || up || down;
+    }
 }
