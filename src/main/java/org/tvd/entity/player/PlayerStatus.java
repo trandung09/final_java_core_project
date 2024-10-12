@@ -2,5 +2,9 @@ package org.tvd.entity.player;
 
 public enum PlayerStatus {
 
-    PLAY, BUY_ITEM, PLAYER_ITEMS
+    NONE,
+    ATTACKING,
+    INVINCIBLE,
+    MANIPULATE_ITEM
+    // Thao tác với vật phẩm
 }

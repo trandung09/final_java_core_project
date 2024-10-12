@@ -19,6 +19,8 @@ public class GamePanel extends JPanel implements Runnable {
     // Fps settings
     private final int FPS = 60;
 
+    private GameStatus gameStatus = GameStatus.GAME_RUNNING;
+
     // Main game thread
     private final Thread gameThread = new Thread(this);
 
@@ -73,7 +75,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
 
-        player.update();
+        if (gameStatus == GameStatus.GAME_RUNNING) {
+
+            player.update();
+        }
     }
 
     @Override
@@ -83,11 +88,14 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        tileManager.render(g2d);
+        if (gameStatus == GameStatus.GAME_RUNNING) {
 
-        player.render(g2d);
+            tileManager.render(g2d);
+            player.render(g2d);
+            eManager.render(g2d);
+        }
 
-        eManager.render(g2d);
+        renderUI.render(g2d);
 
         g.dispose();
     }

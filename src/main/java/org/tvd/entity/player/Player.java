@@ -9,9 +9,12 @@ import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
 import org.tvd.event.KeyHandler;
+import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,11 +24,12 @@ public class Player extends Entity implements EntityActions {
     public final int screenX = FrameConfig.SCREEN_WIDTH / 2 - FrameConfig.TILE_SIZE / 2;
     public final int screenY = FrameConfig.SCREEN_HEIGHT / 2 - FrameConfig.TILE_SIZE;
 
-    // Receive event input
+    // Receive event (from keyboard)
     private final KeyHandler input;
+    private final KeyPressed pressed ;
 
     // Player status
-    private PlayerStatus status = PlayerStatus.PLAY;
+    private PlayerStatus status = PlayerStatus.NONE;
 
     // Player attributes
     private int level = 1;
@@ -35,6 +39,11 @@ public class Player extends Entity implements EntityActions {
     private int maxEnergy = 100;
     private int manas = 0;
     private int maxManas = 10;
+
+    // Index of selected weapon in weapon list
+    private int weapon = 1;
+
+    private List<String> weapons = new ArrayList<>();
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
 
@@ -48,26 +57,38 @@ public class Player extends Entity implements EntityActions {
 
         this.input = keyHandler;
 
+        this.pressed = keyHandler.pressed;
+
+        this.weapons.add("sword");
+        this.weapons.add("axe");
+
         EntityConfig.loadDefaultEntityImage(this);
-        EntityConfig.loadAttackEntityImage(this, "none");
+        EntityConfig.loadAttackEntityImage(this, weapons.get(weapon));
     }
 
     @Override
     public void update() {
 
-        if (status == PlayerStatus.PLAY) {
+        if (!isAlive) {
+            return;
+        }
 
-            counter.drawCounter++;
+        switch (status) {
 
-            if (counter.drawCounter > 12) {
-
-                counter.drawCounter = 0;
-                // Switch image
-                imageChecker = !imageChecker;
+            case NONE -> {
             }
+            case ATTACKING -> attacking();
+            case INVINCIBLE -> defending();
+        }
+
+        if (pressed.isMovePressed()) {
 
             move();
         }
+
+        counter();
+
+        isAttacking = pressed.enter;
     }
 
     @Override
@@ -75,56 +96,96 @@ public class Player extends Entity implements EntityActions {
 
         if (image == null) image = defaultImages[6];
 
+        int tempX = screenX;
+        int tempY = screenY;
+
         switch (direction) {
-            case UP -> image = imageChecker ? defaultImages[0] : defaultImages[1];
-            case DOWN -> image = imageChecker ? defaultImages[2] : defaultImages[3];
-            case LEFT -> image = imageChecker ? defaultImages[4] : defaultImages[5];
-            case RIGHT -> image = imageChecker ? defaultImages[6] : defaultImages[7];
+
+            case UP -> {
+                if (!isAttacking)
+                    image = imageChecker ? defaultImages[0] : defaultImages[1];
+                else {
+                    image = imageChecker ? attackImages[0] : attackImages[1];
+                    tempY -= FrameConfig.TILE_SIZE;
+                }
+            }
+            case DOWN -> {
+                if (!isAttacking)
+                    image = imageChecker ? defaultImages[2] : defaultImages[3];
+                else {
+                    image = imageChecker ? attackImages[2] : attackImages[3];
+                }
+            }
+            case LEFT -> {
+                if (!isAttacking)
+                    image = imageChecker ? defaultImages[4] : defaultImages[5];
+                else {
+                    image = imageChecker ? attackImages[4] : attackImages[5];
+                    tempX -= FrameConfig.TILE_SIZE;
+                }
+            }
+            case RIGHT -> {
+                if (!isAttacking)
+                    image = imageChecker ? defaultImages[6] : defaultImages[7];
+                else {
+                    image = imageChecker ? attackImages[6] : attackImages[7];
+                }
+            }
         }
 
-        g2d.drawImage(image, screenX, screenY, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE, null);
+        g2d.drawImage(image, tempX, tempY, image.getWidth(), image.getHeight(), null);
     }
 
     @Override
     public void move() {
 
-       if (input.pressed.isMovePressed()) {
+        if (!pressed.isMovePressed()) {
+            return;
+        }
 
-           switchDirection();
+        switchDirection();
 
-           isCollisionOn = false;
+        if (isCollisionOn) {
+            return;
+        }
 
-           if (!isCollisionOn) {
+        switch (direction) {
+            case UP -> worldY -= speed;
+            case DOWN -> worldY += speed;
+            case LEFT -> worldX -= speed;
+            case RIGHT -> worldX += speed;
+        }
+    }
 
-               switch (direction) {
-                   case UP -> worldY -= speed;
-                   case DOWN -> worldY += speed;
-                   case LEFT -> worldX -= speed;
-                   case RIGHT -> worldX += speed;
-               }
-           }
-       }
+    @Override
+    public void attacking() {
+
+    }
+
+    @Override
+    public void defending() {
+
+    }
+
+    private void counter() {
+
+        if (counter.drawCounter++ < 10) {
+            return;
+        }
+
+        counter.drawCounter = 0;
+        imageChecker = !imageChecker;
     }
 
     private void switchDirection() {
 
-        if (input.pressed.up)
+        if (pressed.up)
             direction = Direction.UP;
-        else if (input.pressed.down)
+        else if (pressed.down)
             direction = Direction.DOWN;
-        else if (input.pressed.left)
+        else if (pressed.left)
             direction = Direction.LEFT;
-        else if (input.pressed.right)
+        else if (pressed.right)
             direction = Direction.RIGHT;
-    }
-
-    @Override
-    public void attack() {
-
-    }
-
-    @Override
-    public void defense() {
-
     }
 }

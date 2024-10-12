@@ -3,10 +3,11 @@ package org.tvd.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.tvd.control.CollisionDetection;
-import org.tvd.counter.Counter;
+import org.tvd.entity.dependent.Counter;
 import org.tvd.frame.GamePanel;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 @Getter
@@ -32,11 +33,11 @@ public abstract class Entity {
     protected boolean isCollisionOn;
     protected boolean isDead;
     protected boolean isAlive = true;
-    protected boolean isAttacking;
+    protected boolean isAttacking = false;
     protected boolean imageChecker;
 
     protected BufferedImage[] defaultImages = new BufferedImage[8];
-    protected BufferedImage[] attackImages = new BufferedImage[64];
+    protected BufferedImage[] attackImages = new BufferedImage[8];
     protected BufferedImage image;
     protected CollisionDetection detection;
     protected Direction direction = Direction.DOWN;

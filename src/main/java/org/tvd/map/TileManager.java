@@ -1,6 +1,7 @@
 package org.tvd.map;
 
 import lombok.Data;
+
 import org.tvd.config.FrameConfig;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;

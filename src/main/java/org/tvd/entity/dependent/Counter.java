@@ -1,4 +1,4 @@
-package org.tvd.entity.counter;
+package org.tvd.entity.dependent;
 
 public class Counter {
 

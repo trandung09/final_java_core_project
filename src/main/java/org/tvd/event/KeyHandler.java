@@ -33,6 +33,12 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S:
                 pressed.down = true;
                 break;
+            case KeyEvent.VK_L:
+                pressed.lighting = !pressed.lighting;
+                break;
+            case KeyEvent.VK_ENTER:
+                pressed.enter = true;
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported key code: " + code);
         }
@@ -55,6 +61,12 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_S:
                 pressed.down = false;
+                break;
+            case KeyEvent.VK_L:
+                break;
+            case KeyEvent.VK_ENTER:
+                System.out.println(pressed.enter);
+                pressed.enter = false;
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported key code: " + code);
