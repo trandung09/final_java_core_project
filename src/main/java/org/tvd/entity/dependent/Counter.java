@@ -9,4 +9,5 @@ public class Counter {
     public int attackCounter = 0;
     public int defineCounter = 0;
     public int dyingCounter = 0;
+    public int attackerCounter = 0;
 }

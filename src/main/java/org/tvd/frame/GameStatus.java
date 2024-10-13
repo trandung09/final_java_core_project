@@ -8,4 +8,5 @@ public enum GameStatus {
     GAME_OVER,
     GAME_WIN,
     CHARACTER_ST
+    // Trạng thái cho các thao tác của player với item
 }

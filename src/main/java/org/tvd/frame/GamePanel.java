@@ -1,38 +1,57 @@
 package org.tvd.frame;
 
 import org.tvd.config.FrameConfig;
+import org.tvd.entity.monster.MonsterManager;
 import org.tvd.entity.player.Player;
 import org.tvd.environment.EnvironmentManager;
 import org.tvd.event.KeyHandler;
+import org.tvd.item.ItemManager;
 import org.tvd.map.TileManager;
 import org.tvd.render.RenderUI;
 import org.tvd.sound.Sound;
 
 import javax.swing.JPanel;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class GamePanel extends JPanel implements Runnable {
 
     // Fps settings
     private final int FPS = 60;
-
     private GameStatus gameStatus = GameStatus.GAME_RUNNING;
 
     // Main game thread
     private final Thread gameThread = new Thread(this);
 
     // Object settings
-    public final Sound sound = new Sound();
-    public final RenderUI renderUI = new RenderUI(this);
-    public final KeyHandler keyHandler = new KeyHandler(this);
     public final TileManager tileManager = new TileManager(this);
+    public final MonsterManager monsterManager = new MonsterManager(this);
+    public final ItemManager itemManager = new ItemManager(this);
+
+    public final RenderUI renderUI = new RenderUI(this);
+    public final Sound sound = new Sound();
+    public final KeyHandler keyHandler = new KeyHandler(this);
 
     public final EnvironmentManager eManager = new EnvironmentManager(this);
 
     public final Player player  = new Player(this, keyHandler);
+
+    // Game level
+    public int level = 1;
+
+    /*
+     * Service to use multi threading for render
+     * + tile manager (map)
+     * + player
+     * + renderUI
+     */
+    public final ExecutorService executor = Executors.newFixedThreadPool(5);
 
     public GamePanel() {
 
@@ -77,7 +96,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (gameStatus == GameStatus.GAME_RUNNING) {
 
-            player.update();
+            executor.submit(player::update);
+            executor.submit(monsterManager::update);
         }
     }
 
@@ -93,6 +113,8 @@ public class GamePanel extends JPanel implements Runnable {
             tileManager.render(g2d);
             player.render(g2d);
             eManager.render(g2d);
+
+            monsterManager.render(g2d);
         }
 
         renderUI.render(g2d);
