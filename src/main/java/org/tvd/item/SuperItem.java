@@ -6,7 +6,8 @@ import org.tvd.config.FrameConfig;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 @Getter

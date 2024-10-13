@@ -4,8 +4,6 @@ import org.tvd.config.FrameConfig;
 import org.tvd.entity.Entity;
 import org.tvd.frame.GamePanel;
 
-import java.awt.*;
-
 public class CollisionDetection {
 
     private final GamePanel gamePanel;
@@ -65,7 +63,6 @@ public class CollisionDetection {
     }
 
     public void checkCollisionWithOtherEntity(Entity entity, Entity[] other) {
-
 
     }
 

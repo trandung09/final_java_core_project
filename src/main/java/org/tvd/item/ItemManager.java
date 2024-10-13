@@ -23,7 +23,7 @@ public class ItemManager extends ArrayList<SuperItem> {
     }
 
     public void init() {
-        AssetSetter.loadAllItem(gamePanel.level, this);
+        AssetSetter.loadAllItem(gamePanel, this);
     }
 
     public void render(Graphics2D g2d) {

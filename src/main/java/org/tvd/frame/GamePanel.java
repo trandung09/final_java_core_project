@@ -117,6 +117,8 @@ public class GamePanel extends JPanel implements Runnable {
             monsterManager.render(g2d);
         }
 
+
+
         renderUI.render(g2d);
 
         g.dispose();
