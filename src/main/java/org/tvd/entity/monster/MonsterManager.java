@@ -1,5 +1,6 @@
 package org.tvd.entity.monster;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 
 @Getter
 @Setter
+@Builder
 public class MonsterManager extends ArrayList<Monster> {
 
     private final GamePanel gamePanel;
@@ -24,7 +26,7 @@ public class MonsterManager extends ArrayList<Monster> {
     }
 
     public void init() {
-        AssetSetter.loadAllMonster(gamePanel.level, this);
+        AssetSetter.loadAllMonster(gamePanel, this);
     }
 
     public void update() {
@@ -35,16 +37,16 @@ public class MonsterManager extends ArrayList<Monster> {
 
             monster.update();
         }
-
-        for (int i = 0; i < this.size(); i++) {}
     }
 
     public void render(Graphics2D g2d) {
 
+        System.out.println(this.size());
         for (Monster monster : this) {
             if (monster == null) continue;
             if (monster.isDead()) continue;
 
+            System.out.println(monster.getName());
             monster.render(g2d);
         }
     }
