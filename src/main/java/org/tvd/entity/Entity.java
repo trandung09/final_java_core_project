@@ -42,10 +42,10 @@ public abstract class Entity {
     protected CollisionDetection detection;
     protected Direction direction = Direction.DOWN;
 
-    protected Rectangle solidArea;
-    protected Rectangle attackArea;
-    protected int solidAreaDefaultX;
-    protected int solidAreaDefaultY;
+    public Rectangle solidArea;
+    public Rectangle attackArea;
+    public int solidAreaDefaultX;
+    public int solidAreaDefaultY;
 
     public Entity(GamePanel gamePanel) {
 
