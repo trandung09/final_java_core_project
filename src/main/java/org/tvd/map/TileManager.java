@@ -1,6 +1,7 @@
 package org.tvd.map;
 
 import lombok.Data;
+import lombok.Getter;
 
 import org.tvd.config.FrameConfig;
 import org.tvd.frame.GamePanel;
@@ -22,7 +23,7 @@ public class TileManager {
     private final GamePanel gamePanel;
 
     // Map name
-    private String mapName = Map.maps.get(0);
+    private String mapName;
 
     // Utility tool
     private UtilityTool utool = new UtilityTool();
@@ -34,6 +35,8 @@ public class TileManager {
     public TileManager(GamePanel gamePanel) {
 
         this.gamePanel = gamePanel;
+
+        mapName = Map.maps.get(gamePanel.level);
 
         loadAllTiles();
         loadMap();
@@ -124,7 +127,14 @@ public class TileManager {
             screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.getScreenX();
             screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.getScreenY();
 
-            g2d.drawImage(tiles[tileIndex].image, screenX, screenY, null);
+            if (worldX + FrameConfig.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
+                    worldX - FrameConfig.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
+                    worldY + FrameConfig.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
+                    worldY - FrameConfig.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
+            ) {
+
+                g2d.drawImage(tiles[tileIndex].image, screenX, screenY, null);
+            }
 
             col++;
             if (col == FrameConfig.MAX_WORLD_COL) {
@@ -139,13 +149,15 @@ public class TileManager {
         String fullPath = "/tile/" + path;
 
         tiles[index] = new Tile();
+        tiles[index].collision = collision;
         tiles[index].image = utool.getImage(fullPath, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE);
     }
 
-    @Data
-    private static class Map {
+    // Class for get map in level
+    @Getter
+    public static class Map {
 
-        private static final List<String> maps = new ArrayList<String>();
+        public static final List<String> maps = new ArrayList<>();
 
         static {
             maps.add("dungeon01.txt");
