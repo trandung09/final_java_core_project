@@ -52,8 +52,9 @@ public class Player extends Entity implements EntityActions {
         this.name = "boy";
 
         this.speed = 5;
-        this.worldY = 264;
-        this.worldX = 360;
+
+        worldX = FrameConfig.TILE_SIZE * 8;
+        worldY = FrameConfig.TILE_SIZE * 7;
 
         this.input = keyHandler;
 
@@ -144,6 +145,10 @@ public class Player extends Entity implements EntityActions {
         }
 
         switchDirection();
+
+        isCollisionOn = false;
+
+        detection.checkCollisionWithTile(this);
 
         if (isCollisionOn) {
             return;
