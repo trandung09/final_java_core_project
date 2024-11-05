@@ -29,7 +29,6 @@ public class ItemFactory {
     }
 
     private static class Singleton {
-
         // Instance of ItemFactory
         private static final ItemFactory INSTANCE = new ItemFactory();
     }
