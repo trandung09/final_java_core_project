@@ -13,6 +13,7 @@ import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,6 @@ public class Player extends Entity implements EntityActions {
     private final KeyHandler input;
     private final KeyPressed pressed ;
 
-    // Player status
-    private PlayerStatus status = PlayerStatus.NONE;
-
     // Player attributes
     private int level = 1;
     private int exp   = 0;
@@ -41,7 +39,12 @@ public class Player extends Entity implements EntityActions {
     private int maxManas = 10;
 
     // Index of selected weapon in weapon list
-    private int weapon = 1;
+    private int weapon = 0;
+
+    @Override
+    public BufferedImage[] getDefaultImages() {
+        return super.getDefaultImages();
+    }
 
     private List<String> weapons = new ArrayList<>();
 
@@ -60,6 +63,7 @@ public class Player extends Entity implements EntityActions {
 
         this.pressed = keyHandler.pressed;
 
+        this.weapons.add("pick");
         this.weapons.add("sword");
         this.weapons.add("axe");
 
@@ -70,26 +74,21 @@ public class Player extends Entity implements EntityActions {
     @Override
     public void update() {
 
-        if (!isAlive) {
+        if (isDead) {
             return;
         }
 
-        switch (status) {
-
-            case NONE -> {
-            }
-            case ATTACKING -> attacking();
-            case INVINCIBLE -> defending();
-        }
-
-        if (pressed.isMovePressed()) {
-
-            move();
+        if (isAttacking) {
+            attacking();
         }
 
         counter();
+        moving();
+    }
 
-        isAttacking = pressed.enter;
+    @Override
+    public void setAction() {
+
     }
 
     @Override
@@ -106,7 +105,7 @@ public class Player extends Entity implements EntityActions {
                 if (!isAttacking)
                     image = imageChecker ? defaultImages[0] : defaultImages[1];
                 else {
-                    image = imageChecker ? attackImages[0] : attackImages[1];
+                    image = attackImageChecker ? attackImages[0] : attackImages[1];
                     tempY -= FrameConfig.TILE_SIZE;
                 }
             }
@@ -114,14 +113,14 @@ public class Player extends Entity implements EntityActions {
                 if (!isAttacking)
                     image = imageChecker ? defaultImages[2] : defaultImages[3];
                 else {
-                    image = imageChecker ? attackImages[2] : attackImages[3];
+                    image = attackImageChecker ? attackImages[2] : attackImages[3];
                 }
             }
             case LEFT -> {
                 if (!isAttacking)
                     image = imageChecker ? defaultImages[4] : defaultImages[5];
                 else {
-                    image = imageChecker ? attackImages[4] : attackImages[5];
+                    image = attackImageChecker ? attackImages[4] : attackImages[5];
                     tempX -= FrameConfig.TILE_SIZE;
                 }
             }
@@ -129,7 +128,7 @@ public class Player extends Entity implements EntityActions {
                 if (!isAttacking)
                     image = imageChecker ? defaultImages[6] : defaultImages[7];
                 else {
-                    image = imageChecker ? attackImages[6] : attackImages[7];
+                    image = attackImageChecker ? attackImages[6] : attackImages[7];
                 }
             }
         }
@@ -138,7 +137,7 @@ public class Player extends Entity implements EntityActions {
     }
 
     @Override
-    public void move() {
+    public void moving() {
 
         if (!pressed.isMovePressed()) {
             return;
@@ -162,17 +161,11 @@ public class Player extends Entity implements EntityActions {
         }
     }
 
-    @Override
-    public void attacking() {
-
-    }
-
-    @Override
-    public void defending() {
-
-    }
-
     private void counter() {
+
+        if (!pressed.isMovePressed()) {
+            return;
+        }
 
         if (counter.drawCounter++ < 10) {
             return;
@@ -182,15 +175,41 @@ public class Player extends Entity implements EntityActions {
         imageChecker = !imageChecker;
     }
 
+    @Override
+    public void attacking() {
+
+        counter.attackDrawChecker++;
+
+        if (counter.attackDrawChecker < 5) {
+            attackImageChecker = true;
+        }
+        else if (counter.attackDrawChecker <= 25) {
+            attackImageChecker = false;
+        }
+        else {
+            isAttacking = false;
+            counter.attackDrawChecker = 0;
+        }
+    }
+
+    @Override
+    public void defending() {
+
+    }
+
     private void switchDirection() {
 
-        if (pressed.up)
+        if (pressed.up) {
             direction = Direction.UP;
-        else if (pressed.down)
+        }
+        else if (pressed.down) {
             direction = Direction.DOWN;
-        else if (pressed.left)
+        }
+        else if (pressed.left) {
             direction = Direction.LEFT;
-        else if (pressed.right)
+        }
+        else if (pressed.right) {
             direction = Direction.RIGHT;
+        }
     }
 }

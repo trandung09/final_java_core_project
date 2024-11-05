@@ -27,7 +27,6 @@ public class MonsterFactory {
     }
 
     private static class Singleton {
-        // Instance of MonsterFactory
         private static final MonsterFactory INSTANCE = new MonsterFactory();
     }
 }

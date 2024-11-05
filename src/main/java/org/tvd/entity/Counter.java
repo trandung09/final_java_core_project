@@ -1,4 +1,4 @@
-package org.tvd.entity.dependent;
+package org.tvd.entity;
 
 public class Counter {
 
@@ -9,5 +9,5 @@ public class Counter {
     public int attackCounter = 0;
     public int defineCounter = 0;
     public int dyingCounter = 0;
-    public int attackerCounter = 0;
+    public int attackDrawChecker = 0;
 }

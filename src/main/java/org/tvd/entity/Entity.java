@@ -3,7 +3,6 @@ package org.tvd.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.tvd.control.CollisionDetection;
-import org.tvd.entity.dependent.Counter;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Graphics2D;
@@ -28,13 +27,14 @@ public abstract class Entity {
     protected int maxLife;
     protected int life;
 
-    protected boolean isInvincible;
     protected boolean isHpBarOn;
     protected boolean isCollisionOn;
+    protected boolean isAttacking;
+    protected boolean isInvincible;
     protected boolean isDead;
     protected boolean isAlive = true;
-    protected boolean isAttacking = false;
     protected boolean imageChecker;
+    protected boolean attackImageChecker;
 
     protected BufferedImage[] defaultImages = new BufferedImage[8];
     protected BufferedImage[] attackImages = new BufferedImage[8];
@@ -60,5 +60,6 @@ public abstract class Entity {
     }
 
     public void update() {}
+    public abstract void setAction();
     public abstract void render(Graphics2D g2d);
 }
