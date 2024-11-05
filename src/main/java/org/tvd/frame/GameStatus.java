@@ -7,6 +7,7 @@ public enum GameStatus {
     GAME_PAUSE,
     GAME_OVER,
     GAME_WIN,
-    CHARACTER_ST
+    CHARACTER_ST,
+    GAME_DIALOGUE
     // Trạng thái cho các thao tác của player với item
 }

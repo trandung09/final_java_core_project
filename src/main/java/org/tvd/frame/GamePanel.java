@@ -24,10 +24,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Fps settings
     private final int FPS = 60;
-    private GameStatus gameStatus = GameStatus.GAME_RUNNING;
 
     // Main game thread
     private final Thread gameThread = new Thread(this);
+
+    public GameStatus gameStatus = GameStatus.GAME_MENU;
 
     // Object settings
     public final TileManager tileManager = new TileManager(this);
@@ -45,12 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Game level
     public int level = 1;
 
-    /*
-     * Service to use multi threading for render
-     * + tile manager (map)
-     * + player
-     * + renderUI
-     */
+    // Thread pool
     public final ExecutorService executor = Executors.newFixedThreadPool(5);
 
     public GamePanel() {
@@ -92,15 +88,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    public void update() {
-
-        if (gameStatus == GameStatus.GAME_RUNNING) {
-
-            executor.submit(player::update);
-            executor.submit(monsterManager::update);
-        }
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
 
@@ -108,19 +95,28 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        if (gameStatus == GameStatus.GAME_RUNNING) {
+        if (gameStatus == GameStatus.GAME_RUNNING || gameStatus == GameStatus.GAME_PAUSE) {
 
             tileManager.render(g2d);
             player.render(g2d);
             eManager.render(g2d);
 
             monsterManager.render(g2d);
+
+            itemManager.render(g2d);
         }
-
-
 
         renderUI.render(g2d);
 
         g.dispose();
+    }
+
+    public void update() {
+
+        if (gameStatus == GameStatus.GAME_RUNNING) {
+
+            executor.submit(player::update);
+            executor.submit(monsterManager::update);
+        }
     }
 }

@@ -1,7 +1,7 @@
-package org.tvd.stage;
+package org.tvd.frame;
 
 public enum Menu {
 
-    NEW_GAME, TOP_SCORE, QUIT,
+    NEW_GAME, ABOUT, QUIT,
     RETRY, CONTINUE;
 }

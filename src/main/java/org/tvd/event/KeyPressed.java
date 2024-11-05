@@ -8,6 +8,7 @@ public class KeyPressed {
     public boolean down;
     public boolean space;
     public boolean enter;
+    public boolean pause;
     public boolean lighting = true;
 
     public boolean isMovePressed() {
