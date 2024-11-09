@@ -1,5 +1,6 @@
 package org.tvd.entity.monster;
 
+import org.tvd.config.EntityConfig;
 import org.tvd.frame.GamePanel;
 
 public class MonsterFactory {
@@ -14,11 +15,33 @@ public class MonsterFactory {
         }
 
         return switch (name.toLowerCase()) {
-            case "bat" -> new Bat(gamePanel);
-            case "skeleton lord" -> new SkeletonLord(gamePanel);
-            case "slimey" -> new Slimey(gamePanel);
-            case "orc" -> new Orc(gamePanel);
-            default -> throw new IllegalStateException("Unexpected value: " + name.toLowerCase());
+            case "bat" -> {
+                Bat bat = new Bat(gamePanel);
+                EntityConfig.loadDefaultEntityImage(bat);
+
+                yield  bat;
+            }
+            case "skeleton lord" -> {
+                SkeletonLord skeletonLord = new SkeletonLord(gamePanel);
+                EntityConfig.loadDefaultEntityImage(skeletonLord);
+                EntityConfig.loadAttackEntityImage(skeletonLord, "phase2_attack");
+
+                yield skeletonLord;
+            }
+            case "slimey" -> {
+                Slimey slimey = new Slimey(gamePanel);
+                EntityConfig.loadDefaultEntityImage(slimey);
+
+                yield slimey;
+            }
+            case "orc" -> {
+                Orc orc = new Orc(gamePanel);
+                EntityConfig.loadDefaultEntityImage(orc);
+                EntityConfig.loadAttackEntityImage(orc, "attack");
+
+                yield orc;
+            }
+            default -> null;
         };
     }
 
