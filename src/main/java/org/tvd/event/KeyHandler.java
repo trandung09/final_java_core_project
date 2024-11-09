@@ -27,34 +27,54 @@ public class KeyHandler implements KeyListener {
             case GAME_MENU -> keyHandlerMenuGameStage(keyCode);
             case GAME_RUNNING -> keyHandlerRunningGameStage(keyCode);
             case GAME_PAUSE -> keyHandlerPauseGameStage(keyCode);
+            case GAME_WIN -> keyHandlerWinGameStage(keyCode);
+            case GAME_OVER -> keyHandlerOverGameStage(keyCode);
+            case GAME_DIALOGUE -> keyHandlerDialogueStage(keyCode);
+            case CHARACTER_ST -> keyHandlerCharacterGameStage(keyCode);
+            default -> {}
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-        int code = e.getKeyCode();
-
-        switch (code) {
-            case KeyEvent.VK_A:
-                pressed.left = false;
-                break;
-            case KeyEvent.VK_D:
-                pressed.right = false;
-                break;
-            case KeyEvent.VK_W:
-                pressed.up = false;
-                break;
-            case KeyEvent.VK_S:
-                pressed.down = false;
-                break;
-            case KeyEvent.VK_L:
-                break;
-            case KeyEvent.VK_ENTER:
-                pressed.enter = false;
-                break;
-            default:
+    private void keyHandlerRunningGameStage(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_W -> pressed.up = true;
+            case KeyEvent.VK_S -> pressed.down = true;
+            case KeyEvent.VK_A -> pressed.left = true;
+            case KeyEvent.VK_D -> pressed.right = true;
+            case KeyEvent.VK_P -> {
+                if (gamePanel.gameStatus == GameStatus.GAME_RUNNING) {
+                    gamePanel.gameStatus = GameStatus.GAME_PAUSE;
+                }
+            }
+            case KeyEvent.VK_ENTER -> gamePanel.player.setAttacking(true);
+            case KeyEvent.VK_L -> pressed.lighting = !pressed.lighting;
+            default -> {}
         }
+    }
+
+    private void keyHandlerCharacterGameStage(int keyCode) {
+    }
+
+    private void keyHandlerDialogueStage(int keyCode) {
+    }
+
+    private void keyHandlerOverGameStage(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_ENTER -> {
+                if (StageOption.OverStage == Menu.RETRY) {
+                    gamePanel.player.init();
+                    gamePanel.gameStatus = GameStatus.GAME_MENU;
+                }
+                else if (StageOption.OverStage == Menu.QUIT) System.exit(0);
+            }
+            case KeyEvent.VK_UP, KeyEvent.VK_DOWN -> {
+                if (StageOption.OverStage == Menu.RETRY) StageOption.OverStage = Menu.QUIT;
+                else if (StageOption.OverStage == Menu.QUIT) StageOption.OverStage = Menu.RETRY;
+            }
+        }
+    }
+
+    private void keyHandlerWinGameStage(int keyCode) {
     }
 
     private void keyHandlerMenuGameStage(int keyCode) {
@@ -76,22 +96,6 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    private void keyHandlerRunningGameStage(int keyCode) {
-        switch (keyCode) {
-            case KeyEvent.VK_W -> pressed.up = true;
-            case KeyEvent.VK_S -> pressed.down = true;
-            case KeyEvent.VK_A -> pressed.left = true;
-            case KeyEvent.VK_D -> pressed.right = true;
-            case KeyEvent.VK_P -> {
-                if (gamePanel.gameStatus == GameStatus.GAME_RUNNING) {
-                    gamePanel.gameStatus = GameStatus.GAME_PAUSE;
-                }
-            }
-            case KeyEvent.VK_L -> pressed.lighting = !pressed.lighting;
-            default -> {}
-        }
-    }
-
     private void keyHandlerPauseGameStage(int keyCode) {
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
@@ -105,6 +109,21 @@ public class KeyHandler implements KeyListener {
                 if (StageOption.PauseStage == Menu.CONTINUE) StageOption.PauseStage = Menu.QUIT;
                 else if (StageOption.PauseStage == Menu.QUIT) StageOption.PauseStage = Menu.CONTINUE;
             }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+        int code = e.getKeyCode();
+
+        switch (code) {
+            case KeyEvent.VK_A -> pressed.left = false;
+            case KeyEvent.VK_D -> pressed.right = false;
+            case KeyEvent.VK_W -> pressed.up = false;
+            case KeyEvent.VK_S -> pressed.down = false;
+            case KeyEvent.VK_ENTER ->pressed.enter = false;
+            default -> {}
         }
     }
 
