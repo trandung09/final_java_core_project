@@ -5,7 +5,11 @@ import org.tvd.frame.GamePanel;
 import org.tvd.frame.Menu;
 import org.tvd.frame.StageOption;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ public class RenderUI {
     private Graphics2D g2d;
     private Font font;
 
-    // List of message that can be displaye on the screen
+    // List of message that can be display on the screen
     public ArrayList<String> message = new ArrayList<>();
 
     // Message counter arraylist
@@ -50,15 +54,80 @@ public class RenderUI {
             case GAME_PAUSE -> renderGamePauseScreen();
             case GAME_OVER -> renderGameOverScreen();
             case GAME_WIN -> renderGameWinScreen();
-            case CHARACTER_ST -> renderPlayerStage();
+            case CHARACTER_ST -> renderPlayerStageScreen();
             case GAME_DIALOGUE -> renderDialogueScreen();
         }
     }
 
     private void renderGameWinScreen() {
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 65f));
+
+        String text = "Congratulations";
+
+        int screenX = getCenterPositionForText(text);
+        int screenY = FrameConfig.TILE_SIZE * 2 + FrameConfig.TILE_SIZE / 2;
+
+        g2d.drawString(text, screenX, screenY);
+
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 50f));
+
+        text = "on winning";
+        screenX = getCenterPositionForText(text);
+        screenY = screenY + FrameConfig.TILE_SIZE;
+        g2d.drawString(text, screenX, screenY);
+
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 40f));
+
+        text = "Menu";
+        screenX = getCenterPositionForText(text);
+        screenY += FrameConfig.TILE_SIZE * 4;
+
+        if (StageOption.WinStage == Menu.NEW_GAME) {
+            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+        }
+        g2d.drawString(text, screenX, screenY);
+
+        text = "Quit";
+        screenX = getCenterPositionForText(text);
+        screenY += FrameConfig.TILE_SIZE;
+
+        if (StageOption.WinStage == Menu.QUIT) {
+            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+        }
+        g2d.drawString(text, screenX, screenY);
     }
 
+    /**
+     * Draw winning game screen
+     */
     private void renderGameOverScreen() {
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 85f));
+
+        String text = "GAME OVER";
+        int screenX = getCenterPositionForText(text);
+        int screenY = FrameConfig.TILE_SIZE * 4 - (FrameConfig.TILE_SIZE * 3) / 4;
+        g2d.drawString(text, screenX, screenY);
+
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 40f));
+
+        text = "Retry";
+        screenX = getCenterPositionForText(text);
+        screenY = screenY + FrameConfig.TILE_SIZE * 4;
+        g2d.drawString(text, screenX, screenY);
+        if (StageOption.OverStage == Menu.RETRY) {
+            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+        }
+
+        text = "Quit";
+        screenX = getCenterPositionForText(text);
+        screenY = screenY + FrameConfig.TILE_SIZE;
+        g2d.drawString(text, screenX, screenY);
+        if (StageOption.OverStage == Menu.QUIT) {
+            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+        }
     }
 
     /**
@@ -86,6 +155,9 @@ public class RenderUI {
         renderSubWindow(0, 0, 0, 0);
     }
 
+    /**
+     * Draw game menu when game starts
+     */
     public void renderGameMenuScreen() {
 
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 76));
@@ -141,6 +213,9 @@ public class RenderUI {
         }
     }
 
+    /**
+     * Draw game pause screen
+     */
     public void renderGamePauseScreen() {
         g2d.setColor(Color.WHITE);
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 85f));
@@ -170,13 +245,15 @@ public class RenderUI {
     }
 
     /**
-     * Draw all player information: username, time....
+     * Draw all player information: life, enegry, time....
      */
     private void renderPlayerInfo() {
 
+
     }
 
-    public void renderPlayerStage() {
+
+    public void renderPlayerStageScreen() {
 
     }
 
@@ -184,7 +261,6 @@ public class RenderUI {
      * Get the string length and figure out where to place the string
      * so that the string holds the screen vertically.
      *
-     * @param text
      * @return center position of text in view
      */
     public int getCenterPositionForText(String text) {
