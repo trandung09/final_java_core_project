@@ -20,7 +20,7 @@ public class ItemFactory {
             case "key" -> new Key(gamePanel);
             case "lantern" -> new Lantern(gamePanel);
             case "tent" -> new Tent(gamePanel);
-            default -> throw new IllegalStateException("Unexpected value: " + name.toLowerCase());
+            default -> null;
         };
     }
 
@@ -29,7 +29,6 @@ public class ItemFactory {
     }
 
     private static class Singleton {
-        // Instance of ItemFactory
         private static final ItemFactory INSTANCE = new ItemFactory();
     }
 }

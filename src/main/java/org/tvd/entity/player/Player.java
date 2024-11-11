@@ -8,9 +8,11 @@ import org.tvd.config.FrameConfig;
 import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
+import org.tvd.entity.player.weapon.WeaponType;
 import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
+import org.tvd.frame.GameStatus;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -33,8 +35,8 @@ public class Player extends Entity implements EntityActions {
     private int level = 1;
     private int exp   = 0;
     private int nextLevelExp = 10;
-    private int energy = 0;
     private int maxEnergy = 100;
+    private int energy = maxEnergy;
     private int manas = 0;
     private int maxManas = 10;
 
@@ -46,35 +48,49 @@ public class Player extends Entity implements EntityActions {
         return super.getDefaultImages();
     }
 
-    private List<String> weapons = new ArrayList<>();
+    private List<WeaponType> weapons = new ArrayList<>();
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
 
         super(gamePanel);
 
+        init();
+
         this.name = "boy";
 
+        this.pressed = keyHandler.pressed;
+        this.input = keyHandler;
+
+        this.weapons.add(WeaponType.PICK);
+
+        EntityConfig.loadDefaultEntityImage(this);
+        EntityConfig.loadAttackEntityImage(this, weapons.get(weapon).name().toLowerCase());
+    }
+
+    public void init() {
+
         this.speed = 5;
+        this.maxLife = 700;
+        this.life = maxLife;
+
+        this.isDead = false;
 
         worldX = FrameConfig.TILE_SIZE * 8;
         worldY = FrameConfig.TILE_SIZE * 7;
-
-        this.input = keyHandler;
-
-        this.pressed = keyHandler.pressed;
-
-        this.weapons.add("pick");
-        this.weapons.add("sword");
-        this.weapons.add("axe");
-
-        EntityConfig.loadDefaultEntityImage(this);
-        EntityConfig.loadAttackEntityImage(this, weapons.get(weapon));
     }
 
     @Override
     public void update() {
 
+        if (life-- == 0) {
+
+            isDead = true;
+        }
+
         if (isDead) {
+
+            gamePanel.gameStatus = GameStatus.GAME_OVER;
+
             return;
         }
 
@@ -82,12 +98,17 @@ public class Player extends Entity implements EntityActions {
             attacking();
         }
 
-        counter();
         moving();
+        counter();
     }
 
     @Override
     public void setAction() {
+
+    }
+
+    @Override
+    public void resetAction() {
 
     }
 

@@ -13,6 +13,10 @@ public class CollisionDetection {
         this.gamePanel = gamePanel;
     }
 
+    /**
+     * Kiểm tra va chạm của thực thể với các tile trên bản đồ
+     * @param entity thực thể được kiểm tra
+     */
     public void checkCollisionWithTile(Entity entity) {
 
         int worldLeftX = entity.getWorldX() + entity.solidArea.x;

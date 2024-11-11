@@ -4,12 +4,14 @@ import org.tvd.config.FrameConfig;
 import org.tvd.frame.GamePanel;
 import org.tvd.frame.Menu;
 import org.tvd.frame.StageOption;
+import org.tvd.utility.UtilityTool;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public class RenderUI {
 
     private final GamePanel gamePanel;
 
+    private UtilityTool utilityTool;
     private Graphics2D g2d;
     private Font font;
 
@@ -46,11 +49,13 @@ public class RenderUI {
 
         this.g2d = g2d;
 
+        this.utilityTool = new UtilityTool();
+
         this.g2d.setFont(font.deriveFont(Font.BOLD, 54f));
 
         switch (gamePanel.gameStatus) {
             case GAME_MENU -> renderGameMenuScreen();
-            case GAME_RUNNING -> renderPlayerInfo();
+            case GAME_RUNNING -> renderPlayerInfoScreen();
             case GAME_PAUSE -> renderGamePauseScreen();
             case GAME_OVER -> renderGameOverScreen();
             case GAME_WIN -> renderGameWinScreen();
@@ -80,7 +85,7 @@ public class RenderUI {
 
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 40f));
 
-        text = "Menu";
+        text = "New game";
         screenX = getCenterPositionForText(text);
         screenY += FrameConfig.TILE_SIZE * 4;
 
@@ -187,29 +192,39 @@ public class RenderUI {
 
         // Draw menu choose (new game, quit...)
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 45f));
-
         text = "NEW GAME";
+
+        BufferedImage image = null;
+
         screenX = getCenterPositionForText(text);
-        screenY = screenY + (FrameConfig.TILE_SIZE * 7) / 2;
-        g2d.drawString(text, screenX, screenY);
+        screenY = screenY + (FrameConfig.TILE_SIZE * 7) / 2 - 24;
+
+        screenY += FrameConfig.TILE_SIZE;
+
+        String imageRootPath = "/menu/";
+
+        image = utilityTool.getImage(imageRootPath + "play", 200, 55);
+        g2d.drawImage(image, screenX - 12, screenY - 48, 200, 55, null);
         if (StageOption.MenuStage == Menu.NEW_GAME) {
-            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+            image = utilityTool.getImage(imageRootPath + "play_orange", 200, 55);
+            g2d.drawImage(image, screenX - 25, screenY - 55, 225, 65, null);
         }
 
-        text = "ABOUT";
-        screenX = getCenterPositionForText(text);
         screenY = screenY + (FrameConfig.TILE_SIZE * 4) / 3;
-        g2d.drawString(text, screenX, screenY);
+
+        image = utilityTool.getImage(imageRootPath + "option", 200, 55);
+        g2d.drawImage(image, screenX - 12, screenY - 48, 200, 55, null);
         if (StageOption.MenuStage == Menu.ABOUT) {
-            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+            image = utilityTool.getImage(imageRootPath + "option_orange", 200, 55);
+            g2d.drawImage(image, screenX - 25, screenY - 52, 225, 65, null);
         }
 
-        text = "QUIT";
-        screenX = getCenterPositionForText(text);
         screenY = screenY + (FrameConfig.TILE_SIZE * 4) / 3;
-        g2d.drawString(text, screenX, screenY);
+        image = utilityTool.getImage(imageRootPath + "quit", 200, 55);
+        g2d.drawImage(image, screenX - 12, screenY - 48, 200, 55, null);
         if (StageOption.MenuStage == Menu.QUIT) {
-            g2d.drawString(">", screenX - FrameConfig.TILE_SIZE, screenY);
+            image = utilityTool.getImage(imageRootPath + "quit_orange", 200, 55);
+            g2d.drawImage(image, screenX - 25, screenY - 52, 225, 65, null);
         }
     }
 
@@ -247,22 +262,36 @@ public class RenderUI {
     /**
      * Draw all player information: life, enegry, time....
      */
-    private void renderPlayerInfo() {
+    private void renderPlayerInfoScreen() {
 
+        int screenX = FrameConfig.TILE_SIZE;
+        int screenY = FrameConfig.TILE_SIZE;
 
+        // draw player life and energy
+        double lifeOnScale = (double) FrameConfig.TILE_SIZE / gamePanel.player.getMaxLife();
+        double hpBar = lifeOnScale * gamePanel.player.getLife();
+
+        g2d.setColor(new Color(255, 255, 255));
+        g2d.fillRect(screenX - 1, screenY - 16, FrameConfig.TILE_SIZE * 3 + 2, 24);
+
+        g2d.setColor(new Color(255, 35, 35));
+        g2d.fillRect(screenX, screenY - 15, (int)hpBar * 3, 20);
+
+        double manaOnScale = (double) FrameConfig.TILE_SIZE / gamePanel.player.getMaxEnergy();
+        double manaBar = manaOnScale * gamePanel.player.getEnergy();
+
+        screenY += (FrameConfig.TILE_SIZE * 3) / 4;
+        g2d.setColor(new Color(255, 255, 255));
+        g2d.fillRect(screenX - 1, screenY - 16, FrameConfig.TILE_SIZE * 3 + 2, 24);
+
+        g2d.setColor(new Color(255, 255, 153));
+        g2d.fillRect(screenX, screenY - 15, (int)manaBar * 3, 20);
     }
-
 
     public void renderPlayerStageScreen() {
 
     }
 
-    /**
-     * Get the string length and figure out where to place the string
-     * so that the string holds the screen vertically.
-     *
-     * @return center position of text in view
-     */
     public int getCenterPositionForText(String text) {
 
         int length = (int) (g2d.getFontMetrics().getStringBounds(text, g2d).getWidth() / 2);

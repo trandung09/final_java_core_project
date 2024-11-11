@@ -61,5 +61,6 @@ public abstract class Entity {
 
     public void update() {}
     public abstract void setAction();
+    public abstract void resetAction();
     public abstract void render(Graphics2D g2d);
 }

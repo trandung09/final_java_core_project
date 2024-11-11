@@ -36,7 +36,7 @@ public class TileManager {
 
         this.gamePanel = gamePanel;
 
-        mapName = Map.maps.get(gamePanel.level);
+        mapName = Map.maps.get(GamePanel.gameLevel);
 
         loadAllTiles();
         loadMap();
@@ -160,6 +160,7 @@ public class TileManager {
         public static final List<String> maps = new ArrayList<>();
 
         static {
+            maps.add("dungeon00.txt");
             maps.add("dungeon01.txt");
             maps.add("dungeon02.txt");
         }

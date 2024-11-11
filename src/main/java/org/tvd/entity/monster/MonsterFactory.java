@@ -21,7 +21,7 @@ public class MonsterFactory {
 
                 yield  bat;
             }
-            case "skeleton lord" -> {
+            case "skeletonlord" -> {
                 SkeletonLord skeletonLord = new SkeletonLord(gamePanel);
                 EntityConfig.loadDefaultEntityImage(skeletonLord);
                 EntityConfig.loadAttackEntityImage(skeletonLord, "phase2_attack");

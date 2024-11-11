@@ -10,8 +10,13 @@ public class EntityConfig {
 
     private static final UtilityTool utool = new UtilityTool();
 
+    /**
+     * Khởi tạo các thuộc tính là ảnh di chuyển bình thường cho một entity
+     * @param entity đối tượng cần khởi tạo các hình ảnh
+     */
     public static void loadDefaultEntityImage(Entity entity) {
 
+        // Kiểm tra entity là một player hay monster để lấy path đọc ảnh
         String instance = entity instanceof Player ? "player" : "monster";
         String name = entity.getName();
 
@@ -30,6 +35,11 @@ public class EntityConfig {
         images[7] = utool.getImage(path + "right_2", width, height);
     }
 
+    /**
+     * Khởi tạo các thuộc tính là ảnh di chuyển khi tấn công cho một entity
+     * @param entity thực thể cần được khởi tạo các ảnh khi tấn công
+     * @param weapon hình ảnh vũ khí khi tấn công
+     */
     public static void loadAttackEntityImage(Entity entity, String weapon) {
 
         String instance = entity instanceof Player ? "player" : "monster";

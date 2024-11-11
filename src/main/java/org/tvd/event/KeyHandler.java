@@ -1,12 +1,12 @@
 package org.tvd.event;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import org.tvd.frame.GamePanel;
 import org.tvd.frame.GameStatus;
 import org.tvd.frame.Menu;
 import org.tvd.frame.StageOption;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
@@ -53,6 +53,13 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerCharacterGameStage(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_ENTER -> {
+                gamePanel.gameStatus = GameStatus.GAME_RUNNING;
+                
+            }
+            default -> {}
+        }
     }
 
     private void keyHandlerDialogueStage(int keyCode) {
@@ -75,6 +82,20 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerWinGameStage(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_ENTER -> {
+                if (StageOption.WinStage == Menu.NEW_GAME) {
+                    gamePanel.player.init();
+                    gamePanel.gameStatus = GameStatus.GAME_MENU;
+                }
+                else if (StageOption.WinStage == Menu.QUIT) System.exit(0);
+            }        
+            case KeyEvent.VK_UP, KeyEvent.VK_DOWN -> {
+                if (StageOption.WinStage == Menu.NEW_GAME) StageOption.WinStage = Menu.QUIT;
+                else if (StageOption.WinStage == Menu.QUIT) StageOption.WinStage = Menu.NEW_GAME;
+            }
+            default -> {}
+        }
     }
 
     private void keyHandlerMenuGameStage(int keyCode) {
@@ -113,6 +134,11 @@ public class KeyHandler implements KeyListener {
     }
 
     @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
     public void keyReleased(KeyEvent e) {
 
         int code = e.getKeyCode();
@@ -127,8 +153,4 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
 }

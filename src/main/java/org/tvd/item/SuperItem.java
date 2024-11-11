@@ -6,6 +6,7 @@ import org.tvd.config.FrameConfig;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
 
+import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -34,6 +35,11 @@ public abstract class SuperItem {
     public SuperItem(GamePanel gamePanel) {
 
         this.gamePanel = gamePanel;
+
+        init();
+    }
+
+    public void init() {
 
         this.collision = true;
 

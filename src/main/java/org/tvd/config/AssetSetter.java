@@ -8,7 +8,8 @@ import org.tvd.item.ItemFactory;
 import org.tvd.item.ItemManager;
 import org.tvd.item.SuperItem;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,12 +23,21 @@ public class AssetSetter {
     private static final ItemFactory itemFactory = ItemFactory.getInstance();
     private static final MonsterFactory monsterFactory = MonsterFactory.getInstance();
 
+    /**
+     * Khởi tạo tất cả các item với các thông tin được đọc từ file
+     *
+     * @param gamePanel là tham số cho hàm tạo các item
+     * @param itemManager quản lý các item như một array list
+     */
     public static void loadAllItem(GamePanel gamePanel, ItemManager itemManager) {
-        int level = gamePanel.gameLevel;
 
+        int level = GamePanel.gameLevel;
+
+        // Lấy tên file
         String itemInitFilePath = resourcePath + "item" + level + ".txt";
         try {
 
+            // Sử dụng lớp tiện ích Files để tạo một đối tượng BufferedReader đọc file
             br = Files.newBufferedReader(Path.of(itemInitFilePath), StandardCharsets.UTF_8);
 
             while (true) {
@@ -54,17 +64,25 @@ public class AssetSetter {
         } catch (IOException e) {
             System.err.println("AssetSetter: error reading file.");
         } finally {
-            try {
-                br.close();
-            } catch (IOException e) {
-                System.err.println("AssetSetter: error closing file.");
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    System.err.println("AssetSetter: error closing file.");
+                }
             }
         }
     }
 
+    /**
+     * Khởi tạo tất cả các monster với các thông tin được đọc từ file
+     *
+     * @param gamePanel là tham số cho hàm tạo các item
+     * @param monsterManager quản lý các monster như một array list
+     */
     public static void loadAllMonster(GamePanel gamePanel, MonsterManager monsterManager) {
 
-        int level = gamePanel.gameLevel;
+        int level = GamePanel.gameLevel;
 
         String monsterInitFilePath = resourcePath + "monster" + level + ".txt";
         try {
@@ -84,7 +102,9 @@ public class AssetSetter {
 
                 Monster monster = monsterFactory.getMonster(monsterName, gamePanel);
 
-                if (monster == null) continue;
+                if (monster == null) {
+                    continue;
+                }
 
                 monster.setWorldX(mpX);
                 monster.setWorldY(mpY);
@@ -94,10 +114,12 @@ public class AssetSetter {
         } catch (IOException e) {
             System.err.println("AssetSetter: error reading file.");
         } finally {
-            try {
-                br.close();
-            } catch (IOException e) {
-                System.err.println("AssetSetter: error closing file.");
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    System.err.println("AssetSetter: error closing file.");
+                }
             }
         }
     }

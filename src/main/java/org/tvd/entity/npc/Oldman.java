@@ -17,6 +17,11 @@ public class Oldman extends Entity
     }
 
     @Override
+    public void resetAction() {
+
+    }
+
+    @Override
     public void render(Graphics2D g2d) {
 
     }

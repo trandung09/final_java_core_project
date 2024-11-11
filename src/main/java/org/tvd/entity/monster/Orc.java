@@ -8,6 +8,19 @@ public class Orc extends Monster {
 
     public Orc(GamePanel gamePanel) {
         super(gamePanel);
+
+        init();
+    }
+
+    public void init() {
+
+        this.name = "orc";
+        this.isAlive = true;
+        this.maxLife = 15;
+        this.life = maxLife;
+        this.speed = 4;
+        this.abilityAttack = true;
+        this.abilityFly = false;
     }
 
     @Override

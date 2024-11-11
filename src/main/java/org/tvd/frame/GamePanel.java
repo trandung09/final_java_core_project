@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GamePanel extends JPanel implements Runnable {
+    
     // Fps settings
     private final int FPS = 60;
 
@@ -43,8 +44,8 @@ public class GamePanel extends JPanel implements Runnable {
     public final Player player  = new Player(this, keyHandler);
 
     // Game level
-    public int gameLevel = 1;
-    public int maxGameLevel = 2;
+    public static int gameLevel = 1;
+    public static int maxGameLevel = 2;
 
     // Thread pool
     public final ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -95,7 +96,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        if (gameStatus == GameStatus.GAME_RUNNING || gameStatus == GameStatus.GAME_PAUSE || gameStatus == GameStatus.GAME_OVER) {
+        if (gameStatus != GameStatus.GAME_MENU) {
 
             tileManager.render(g2d);
             player.render(g2d);

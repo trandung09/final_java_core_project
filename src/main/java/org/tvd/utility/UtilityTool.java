@@ -14,6 +14,7 @@ public class UtilityTool {
             image = scaleImage(image, width, height);
 
         } catch (Exception e) {
+            System.out.println("Utility tool: " + imagePath);
             System.err.println("Error while loading image " + e.getMessage());
         }
         return image;
