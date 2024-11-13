@@ -1,8 +1,7 @@
 package org.tvd.entity.monster;
 
+import org.tvd.entity.Direction;
 import org.tvd.frame.GamePanel;
-
-import java.awt.Graphics2D;
 
 public class Bat extends Monster {
 
@@ -16,30 +15,26 @@ public class Bat extends Monster {
     private void init() {
 
         this.name = "bat";
-        this.speed = 2;
+        this.speed = 1;
+        this.direction = Direction.RIGHT;
         this.maxLife = 5;
         this.life = maxLife;
         this.abilityAttack = false;
         this.abilityFly = true;
     }
 
+    @Override
     public void update() {
 
-        setAction();
-    }
+        super.update();
 
-    @Override
-    public void resetAction() {
+        isCollisionOn = false;
 
-    }
-
-
-    @Override
-    public void render(Graphics2D g2d) {
-
-        if (image == null) {
-            image = defaultImages[0];
+        switch (direction) {
+            case UP -> worldY -= speed;
+            case DOWN -> worldY += speed;
+            case LEFT -> worldX -= speed;
+            case RIGHT -> worldX += speed;
         }
-        g2d.drawImage(image, worldX, worldY, image.getWidth(), image.getHeight(), null);
     }
 }
