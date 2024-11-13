@@ -10,6 +10,6 @@ public class Tent extends SuperItem {
         super(gamePanel);
 
         this.name = "tent";
-        this.image = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
+        this.defaultImage = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
     }
 }

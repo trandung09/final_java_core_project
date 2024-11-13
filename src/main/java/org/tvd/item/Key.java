@@ -10,6 +10,6 @@ public class Key extends SuperItem {
         super(gamePanel);
 
         this.name = "key";
-        this.image = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
+        this.defaultImage = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
     }
 }

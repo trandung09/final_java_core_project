@@ -10,6 +10,6 @@ public class Coin extends SuperItem {
         super(gamePanel);
 
         this.name = "coin";
-        this.image = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
+        this.defaultImage = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
     }
 }

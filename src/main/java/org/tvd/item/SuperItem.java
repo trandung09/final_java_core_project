@@ -18,7 +18,8 @@ public abstract class SuperItem {
 
     protected GamePanel gamePanel;
 
-    protected BufferedImage image;
+    protected BufferedImage defaultImage;
+    protected BufferedImage otherImage;
     protected UtilityTool utool;
 
     protected boolean collision;
@@ -60,7 +61,7 @@ public abstract class SuperItem {
                 worldY + FrameAsset.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
                 worldY - FrameAsset.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
         ) {
-            g2d.drawImage(image, screenX, screenY, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE, null);
+            g2d.drawImage(defaultImage, screenX, screenY, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE, null);
         }
     }
 }

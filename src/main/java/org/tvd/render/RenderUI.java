@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 
 import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
@@ -22,7 +21,7 @@ public class RenderUI {
 
     private final GamePanel gamePanel;
 
-    private UtilityTool utilityTool;
+    private UtilityTool utool;
     private Graphics2D g2d;
     private Font font;
 
@@ -32,22 +31,10 @@ public class RenderUI {
     // Message counter arraylist
     public ArrayList<Integer> messageCounter = new ArrayList<>();
 
+    // Message will be displayed on the screen dialog box.
+    public static String currentDialogueMessage;
+
     public RenderUI(GamePanel gamePanel) {
-
-
-        messages.add("1");
-        messages.add("2");
-        messages.add("3");
-        messages.add("4");
-
-        messageCounter.add(0);
-
-        messageCounter.add(0);
-
-        messageCounter.add(0);
-
-
-        messageCounter.add(0);
 
         this.gamePanel = gamePanel;
 
@@ -66,7 +53,7 @@ public class RenderUI {
 
         this.g2d = g2d;
 
-        this.utilityTool = new UtilityTool();
+        this.utool = new UtilityTool();
 
         this.g2d.setFont(font.deriveFont(Font.BOLD, 54f));
 
@@ -86,9 +73,9 @@ public class RenderUI {
 
     /**
      * Draw all messages on screen
-     * */
+     */
     private void renderGameRunningScreen() {
-        System.out.println("Game running screen");
+
         int screeX = FrameAsset.TILE_SIZE;
         int screeY = FrameAsset.TILE_SIZE * 5;
 
@@ -112,10 +99,13 @@ public class RenderUI {
             boolean maxMessageCountCheck = message.equalsIgnoreCase("1 damage!") || message.contains("Switch weapon");
             int maxMessageCount = maxMessageCountCheck ? 60 : 150;
 
+            // Handler concurrent modification exception when remove
+            // a value in for loop
             if (currentMessageCounter > maxMessageCount) {
                 try {
                     messages.remove(i);
                     messageCounter.remove(i);
+
                 } catch (ConcurrentModificationException cme) {
                     System.err.println("RenderUI - render game running screen method: concurrent modification exception.");
                 }
@@ -198,7 +188,7 @@ public class RenderUI {
      * Draw a notification sub window with height and width
      * starting from x, y position
      */
-    private void renderSubWindow(int x, int y, int width, int height) {
+    private void renderSubWindowScreen(int x, int y, int width, int height) {
 
         Color color = new Color(0, 0, 0, 210);
         g2d.setColor(color);
@@ -216,7 +206,23 @@ public class RenderUI {
      */
     private void renderDialogueScreen() {
 
-        renderSubWindow(0, 0, 0, 0);
+        int screenX = FrameAsset.TILE_SIZE * 2;
+        int screenY = FrameAsset.TILE_SIZE / 2;
+
+        int width = FrameAsset.SCREEN_WIDTH - FrameAsset.TILE_SIZE * 4;
+        int height = FrameAsset.TILE_SIZE * 4;
+
+        renderSubWindowScreen(screenX, screenY, width, height);
+
+        screenX += FrameAsset.TILE_SIZE / 2;
+        screenY += FrameAsset.TILE_SIZE;
+
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 30f));
+
+        for (String inlineMessage : currentDialogueMessage.split("\n")) {
+            g2d.drawString(inlineMessage, screenX, screenY);
+            screenY += 40;
+        }
     }
 
     /**
@@ -264,27 +270,27 @@ public class RenderUI {
 
         String imageRootPath = "/menu/";
 
-        image = utilityTool.getImage(imageRootPath + "play", 200, 55);
+        image = utool.getImage(imageRootPath + "play", 200, 55);
         g2d.drawImage(image, screenX - 12, screenY - 48, 200, 55, null);
         if (StageOption.MenuStage == Menu.NEW_GAME) {
-            image = utilityTool.getImage(imageRootPath + "play_orange", 200, 55);
+            image = utool.getImage(imageRootPath + "play_orange", 200, 55);
             g2d.drawImage(image, screenX - 25, screenY - 55, 225, 65, null);
         }
 
         screenY = screenY + (FrameAsset.TILE_SIZE * 4) / 3;
 
-        image = utilityTool.getImage(imageRootPath + "option", 200, 55);
+        image = utool.getImage(imageRootPath + "option", 200, 55);
         g2d.drawImage(image, screenX - 12, screenY - 48, 200, 55, null);
         if (StageOption.MenuStage == Menu.ABOUT) {
-            image = utilityTool.getImage(imageRootPath + "option_orange", 200, 55);
+            image = utool.getImage(imageRootPath + "option_orange", 200, 55);
             g2d.drawImage(image, screenX - 25, screenY - 52, 225, 65, null);
         }
 
         screenY = screenY + (FrameAsset.TILE_SIZE * 4) / 3;
-        image = utilityTool.getImage(imageRootPath + "quit", 200, 55);
+        image = utool.getImage(imageRootPath + "quit", 200, 55);
         g2d.drawImage(image, screenX - 12, screenY - 48, 200, 55, null);
         if (StageOption.MenuStage == Menu.QUIT) {
-            image = utilityTool.getImage(imageRootPath + "quit_orange", 200, 55);
+            image = utool.getImage(imageRootPath + "quit_orange", 200, 55);
             g2d.drawImage(image, screenX - 25, screenY - 52, 225, 65, null);
         }
     }
@@ -349,14 +355,24 @@ public class RenderUI {
         g2d.fillRect(screenX, screenY - 15, (int) manaBar * 3, 20);
 
         // Draw play time
-        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 32f));
-        String text = convertGamePlayTime();
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 30f));
+        g2d.setColor(Color.WHITE);
+        String text = convertGamePlayTimeToString();
         screenX = FrameAsset.SCREEN_WIDTH - FrameAsset.TILE_SIZE * 3;
         screenY = FrameAsset.TILE_SIZE;
         g2d.drawString(text, screenX, screenY);
     }
 
-    private String convertGamePlayTime() {
+    private void renderPlayerStageScreen() {
+
+    }
+
+    /**
+     * Returns the time format as a string like this: mm:ss:ll
+     * + mm = minutes, ss = seconds, ll = milliseconds
+     * + example: 12:12:77 (12 minutes, 12 seconds, 77 millisecond)
+     */
+    private String convertGamePlayTimeToString() {
 
         double seconds = GamePanel.gamePlayTime / GamePanel.FPS;
         int miliseconds = (int) ((seconds - (int) seconds) * 100);
@@ -370,11 +386,12 @@ public class RenderUI {
         );
     }
 
-    public void renderPlayerStageScreen() {
-
-    }
-
-    public int getCenterPositionForText(String text) {
+    /**
+     * Returns the horizontal position of a string (taken from the
+     * width of the font size set for the graphics object)
+     * @param text
+     */
+    private int getCenterPositionForText(String text) {
 
         int length = (int) (g2d.getFontMetrics().getStringBounds(text, g2d).getWidth() / 2);
         return FrameAsset.SCREEN_WIDTH / 2 - length;
