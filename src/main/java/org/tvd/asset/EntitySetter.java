@@ -1,4 +1,4 @@
-package org.tvd.config;
+package org.tvd.asset;
 
 import org.tvd.entity.Entity;
 import org.tvd.entity.player.Player;
@@ -6,7 +6,7 @@ import org.tvd.utility.UtilityTool;
 
 import java.awt.image.BufferedImage;
 
-public class EntityConfig {
+public class EntitySetter {
 
     private static final UtilityTool utool = new UtilityTool();
 
@@ -22,7 +22,7 @@ public class EntityConfig {
 
         BufferedImage[] images = entity.getDefaultImages();
 
-        int width = FrameConfig.TILE_SIZE, height = FrameConfig.TILE_SIZE;
+        int width = FrameAsset.TILE_SIZE, height = FrameAsset.TILE_SIZE;
         String path = "/" + instance + "/" + name + "_";
 
         images[0] = utool.getImage(path + "up_1", width, height);
@@ -47,7 +47,7 @@ public class EntityConfig {
 
         BufferedImage[] images = entity.getAttackImages();
 
-        int width = FrameConfig.TILE_SIZE, height = FrameConfig.TILE_SIZE;
+        int width = FrameAsset.TILE_SIZE, height = FrameAsset.TILE_SIZE;
         String path = "/" + instance + "/" + name + "_" + weapon + "_";
 
         images[0] = utool.getImage(path + "up_1", width, height * 2);

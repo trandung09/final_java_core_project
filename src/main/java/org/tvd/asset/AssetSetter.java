@@ -1,4 +1,4 @@
-package org.tvd.config;
+package org.tvd.asset;
 
 import org.tvd.entity.monster.Monster;
 import org.tvd.entity.monster.MonsterFactory;

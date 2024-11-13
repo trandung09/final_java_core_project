@@ -1,4 +1,4 @@
-package org.tvd.config;
+package org.tvd.asset;
 
 public final class FrameConfig {
 
