@@ -3,8 +3,8 @@ package org.tvd.entity.player;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.tvd.config.EntityConfig;
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.EntitySetter;
+import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
@@ -12,7 +12,6 @@ import org.tvd.entity.player.weapon.WeaponType;
 import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
-import org.tvd.frame.GameStatus;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -24,8 +23,8 @@ import java.util.List;
 public class Player extends Entity implements EntityActions {
 
     // For camera settings
-    public final int screenX = FrameConfig.SCREEN_WIDTH / 2 - FrameConfig.TILE_SIZE / 2;
-    public final int screenY = FrameConfig.SCREEN_HEIGHT / 2 - FrameConfig.TILE_SIZE;
+    public final int screenX = FrameAsset.SCREEN_WIDTH / 2 - FrameAsset.TILE_SIZE / 2;
+    public final int screenY = FrameAsset.SCREEN_HEIGHT / 2 - FrameAsset.TILE_SIZE;
 
     // Receive event (from keyboard)
     private final KeyHandler input;
@@ -63,8 +62,8 @@ public class Player extends Entity implements EntityActions {
 
         this.weapons.add(WeaponType.PICK);
 
-        EntityConfig.loadDefaultEntityImage(this);
-        EntityConfig.loadAttackEntityImage(this, weapons.get(weapon).name().toLowerCase());
+        EntitySetter.loadDefaultEntityImage(this);
+        EntitySetter.loadAttackEntityImage(this, weapons.get(weapon).name().toLowerCase());
     }
 
     public void init() {
@@ -75,21 +74,21 @@ public class Player extends Entity implements EntityActions {
 
         this.isDead = false;
 
-        worldX = FrameConfig.TILE_SIZE * 8;
-        worldY = FrameConfig.TILE_SIZE * 7;
+        worldX = FrameAsset.TILE_SIZE * 8;
+        worldY = FrameAsset.TILE_SIZE * 7;
     }
 
     @Override
     public void update() {
 
-        if (life-- == 0) {
+        if (life == 0) {
 
             isDead = true;
         }
 
         if (isDead) {
 
-            gamePanel.gameStatus = GameStatus.GAME_OVER;
+            // gamePanel.gameStatus = GameStatus.GAME_OVER;
 
             return;
         }
@@ -127,7 +126,7 @@ public class Player extends Entity implements EntityActions {
                     image = imageChecker ? defaultImages[0] : defaultImages[1];
                 else {
                     image = attackImageChecker ? attackImages[0] : attackImages[1];
-                    tempY -= FrameConfig.TILE_SIZE;
+                    tempY -= FrameAsset.TILE_SIZE;
                 }
             }
             case DOWN -> {
@@ -142,7 +141,7 @@ public class Player extends Entity implements EntityActions {
                     image = imageChecker ? defaultImages[4] : defaultImages[5];
                 else {
                     image = attackImageChecker ? attackImages[4] : attackImages[5];
-                    tempX -= FrameConfig.TILE_SIZE;
+                    tempX -= FrameAsset.TILE_SIZE;
                 }
             }
             case RIGHT -> {

@@ -2,11 +2,10 @@ package org.tvd.item;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
 
-import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -45,7 +44,7 @@ public abstract class SuperItem {
 
         this.utool = new UtilityTool();
 
-        this.solidArea = new Rectangle(0, 0, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE);
+        this.solidArea = new Rectangle(0, 0, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
 
         this.solidAreaDefaultX = solidArea.x;
         this.solidAreaDefaultY = solidArea.y;
@@ -56,12 +55,12 @@ public abstract class SuperItem {
         int screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.screenX;
         int screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.screenY;
 
-        if (worldX + FrameConfig.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
-                worldX - FrameConfig.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
-                worldY + FrameConfig.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
-                worldY - FrameConfig.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
+        if (worldX + FrameAsset.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
+                worldX - FrameAsset.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
+                worldY + FrameAsset.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
+                worldY - FrameAsset.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
         ) {
-            g2d.drawImage(image, screenX, screenY, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE, null);
+            g2d.drawImage(image, screenX, screenY, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE, null);
         }
     }
 }

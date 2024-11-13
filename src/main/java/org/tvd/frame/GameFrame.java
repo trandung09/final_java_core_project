@@ -1,6 +1,6 @@
 package org.tvd.frame;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 
 import java.awt.Dimension;
 
@@ -18,7 +18,7 @@ public class GameFrame extends JFrame {
 
         this.setResizable(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(new Dimension(FrameConfig.SCREEN_WIDTH, FrameConfig.SCREEN_HEIGHT));
+        this.setSize(new Dimension(FrameAsset.SCREEN_WIDTH, FrameAsset.SCREEN_HEIGHT));
         this.setLocationRelativeTo(null);
     }
 }

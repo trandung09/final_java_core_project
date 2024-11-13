@@ -3,7 +3,7 @@ package org.tvd.entity.monster;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.tvd.config.AssetSetter;
+import org.tvd.asset.AssetSetter;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Graphics2D;

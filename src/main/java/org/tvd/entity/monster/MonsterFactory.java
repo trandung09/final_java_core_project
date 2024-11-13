@@ -1,6 +1,6 @@
 package org.tvd.entity.monster;
 
-import org.tvd.config.EntityConfig;
+import org.tvd.asset.EntitySetter;
 import org.tvd.frame.GamePanel;
 
 public class MonsterFactory {
@@ -17,27 +17,27 @@ public class MonsterFactory {
         return switch (name.toLowerCase()) {
             case "bat" -> {
                 Bat bat = new Bat(gamePanel);
-                EntityConfig.loadDefaultEntityImage(bat);
+                EntitySetter.loadDefaultEntityImage(bat);
 
                 yield  bat;
             }
             case "skeletonlord" -> {
                 SkeletonLord skeletonLord = new SkeletonLord(gamePanel);
-                EntityConfig.loadDefaultEntityImage(skeletonLord);
-                EntityConfig.loadAttackEntityImage(skeletonLord, "phase2_attack");
+                EntitySetter.loadDefaultEntityImage(skeletonLord);
+                EntitySetter.loadAttackEntityImage(skeletonLord, "phase2_attack");
 
                 yield skeletonLord;
             }
             case "slimey" -> {
                 Slimey slimey = new Slimey(gamePanel);
-                EntityConfig.loadDefaultEntityImage(slimey);
+                EntitySetter.loadDefaultEntityImage(slimey);
 
                 yield slimey;
             }
             case "orc" -> {
                 Orc orc = new Orc(gamePanel);
-                EntityConfig.loadDefaultEntityImage(orc);
-                EntityConfig.loadAttackEntityImage(orc, "attack");
+                EntitySetter.loadDefaultEntityImage(orc);
+                EntitySetter.loadAttackEntityImage(orc, "attack");
 
                 yield orc;
             }

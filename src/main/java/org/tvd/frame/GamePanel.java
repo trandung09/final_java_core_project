@@ -1,6 +1,6 @@
 package org.tvd.frame;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.entity.monster.MonsterManager;
 import org.tvd.entity.player.Player;
 import org.tvd.environment.EnvironmentManager;
@@ -56,7 +56,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
-        this.setPreferredSize(new Dimension(FrameConfig.SCREEN_WIDTH, FrameConfig.SCREEN_HEIGHT));
+        this.setPreferredSize(new Dimension(FrameAsset.SCREEN_WIDTH, FrameAsset.SCREEN_HEIGHT));
         this.setFocusable(true);
         this.requestFocusInWindow(true);
 

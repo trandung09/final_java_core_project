@@ -1,6 +1,6 @@
 package org.tvd.item;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
 
 public class Tent extends SuperItem {
@@ -10,6 +10,6 @@ public class Tent extends SuperItem {
         super(gamePanel);
 
         this.name = "tent";
-        this.image = utool.getImage(path + name, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE);
+        this.image = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
     }
 }

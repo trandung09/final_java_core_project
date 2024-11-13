@@ -3,7 +3,7 @@ package org.tvd.map;
 import lombok.Data;
 import lombok.Getter;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
 
@@ -29,7 +29,7 @@ public class TileManager {
     private UtilityTool utool = new UtilityTool();
 
     // Map properties
-    private int[][] maps  = new int[FrameConfig.MAX_WORLD_ROW][FrameConfig.MAX_WORLD_COL];
+    private int[][] maps  = new int[FrameAsset.MAX_WORLD_ROW][FrameAsset.MAX_WORLD_COL];
     private final Tile[]  tiles = new Tile[50];
 
     public TileManager(GamePanel gamePanel) {
@@ -118,26 +118,26 @@ public class TileManager {
 
         int row = 0, col = 0, worldX, worldY, screenX, screenY;
 
-        while (row < FrameConfig.MAX_WORLD_ROW && col < FrameConfig.MAX_WORLD_COL) {
+        while (row < FrameAsset.MAX_WORLD_ROW && col < FrameAsset.MAX_WORLD_COL) {
 
             int tileIndex = maps[row][col];
 
-            worldX = col * FrameConfig.TILE_SIZE;
-            worldY = row * FrameConfig.TILE_SIZE;
+            worldX = col * FrameAsset.TILE_SIZE;
+            worldY = row * FrameAsset.TILE_SIZE;
             screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.getScreenX();
             screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.getScreenY();
 
-            if (worldX + FrameConfig.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
-                    worldX - FrameConfig.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
-                    worldY + FrameConfig.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
-                    worldY - FrameConfig.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
+            if (worldX + FrameAsset.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
+                    worldX - FrameAsset.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
+                    worldY + FrameAsset.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
+                    worldY - FrameAsset.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
             ) {
 
                 g2d.drawImage(tiles[tileIndex].image, screenX, screenY, null);
             }
 
             col++;
-            if (col == FrameConfig.MAX_WORLD_COL) {
+            if (col == FrameAsset.MAX_WORLD_COL) {
                 row++;
                 col = 0;
             }
@@ -150,7 +150,7 @@ public class TileManager {
 
         tiles[index] = new Tile();
         tiles[index].collision = collision;
-        tiles[index].image = utool.getImage(fullPath, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE);
+        tiles[index].image = utool.getImage(fullPath, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
     }
 
     // Class for get map in level

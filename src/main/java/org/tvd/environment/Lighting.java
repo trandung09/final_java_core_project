@@ -1,6 +1,6 @@
 package org.tvd.environment;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
 
 import java.awt.*;
@@ -25,16 +25,16 @@ public class Lighting {
 
     public void setUp() {
 
-        darknessFilter = new BufferedImage(FrameConfig.SCREEN_WIDTH, FrameConfig.SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        darknessFilter = new BufferedImage(FrameAsset.SCREEN_WIDTH, FrameAsset.SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) darknessFilter.getGraphics();
 
         // duong kinh
         int circleSize = 400;
 
-        Area screenArea = new Area(new Rectangle2D.Double(0, - FrameConfig.SCREEN_HEIGHT, FrameConfig.SCREEN_WIDTH * 2, FrameConfig.SCREEN_HEIGHT * 2));
+        Area screenArea = new Area(new Rectangle2D.Double(0, - FrameAsset.SCREEN_HEIGHT, FrameAsset.SCREEN_WIDTH * 2, FrameAsset.SCREEN_HEIGHT * 2));
 
-        int centerX = gamePanel.player.screenX + FrameConfig.TILE_SIZE / 2;
-        int centerY = gamePanel.player.screenY + FrameConfig.TILE_SIZE / 2;
+        int centerX = gamePanel.player.screenX + FrameAsset.TILE_SIZE / 2;
+        int centerY = gamePanel.player.screenY + FrameAsset.TILE_SIZE / 2;
 
         // tam vung sang
         double x = centerX - (double) circleSize / 2;

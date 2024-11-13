@@ -1,6 +1,6 @@
 package org.tvd.control;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Entity;
 import org.tvd.frame.GamePanel;
 
@@ -24,35 +24,35 @@ public class CollisionDetection {
         int worldTopY = entity.getWorldY() + entity.solidArea.y;
         int worldBottomY = entity.getWorldY() + entity.solidArea.y + entity.solidArea.height;
 
-        int playerLeftCol = worldLeftX / FrameConfig.TILE_SIZE;
-        int playerRightCol = worldRightX / FrameConfig.TILE_SIZE;
-        int playerTopRow = worldTopY / FrameConfig.TILE_SIZE;
-        int playerBottomRow = worldBottomY / FrameConfig.TILE_SIZE;
+        int playerLeftCol = worldLeftX / FrameAsset.TILE_SIZE;
+        int playerRightCol = worldRightX / FrameAsset.TILE_SIZE;
+        int playerTopRow = worldTopY / FrameAsset.TILE_SIZE;
+        int playerBottomRow = worldBottomY / FrameAsset.TILE_SIZE;
 
         int tileOne, tileTwo;
 
         switch (entity.getDirection()) {
 
             case UP -> {
-                playerTopRow = (worldTopY - entity.getSpeed()) / FrameConfig.TILE_SIZE;
+                playerTopRow = (worldTopY - entity.getSpeed()) / FrameAsset.TILE_SIZE;
                 tileOne = gamePanel.tileManager.getMaps()[playerTopRow][playerLeftCol];
                 tileTwo = gamePanel.tileManager.getMaps()[playerTopRow][playerRightCol];
             }
 
             case DOWN -> {
-                playerBottomRow = (worldBottomY + entity.getSpeed()) / FrameConfig.TILE_SIZE;
+                playerBottomRow = (worldBottomY + entity.getSpeed()) / FrameAsset.TILE_SIZE;
                 tileOne = gamePanel.tileManager.getMaps()[playerBottomRow][playerLeftCol];
                 tileTwo = gamePanel.tileManager.getMaps()[playerBottomRow][playerRightCol];
             }
 
             case LEFT -> {
-                playerLeftCol = (worldLeftX - entity.getSpeed()) / FrameConfig.TILE_SIZE;
+                playerLeftCol = (worldLeftX - entity.getSpeed()) / FrameAsset.TILE_SIZE;
                 tileOne = gamePanel.tileManager.getMaps()[playerTopRow][playerLeftCol];
                 tileTwo = gamePanel.tileManager.getMaps()[playerBottomRow][playerLeftCol];
             }
 
             case RIGHT -> {
-                playerRightCol = (worldRightX + entity.getSpeed()) / FrameConfig.TILE_SIZE;
+                playerRightCol = (worldRightX + entity.getSpeed()) / FrameAsset.TILE_SIZE;
                 tileOne = gamePanel.tileManager.getMaps()[playerTopRow][playerRightCol];
                 tileTwo = gamePanel.tileManager.getMaps()[playerBottomRow][playerRightCol];
             }

@@ -1,6 +1,6 @@
 package org.tvd.item;
 
-import org.tvd.config.FrameConfig;
+import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
 
 public class Coin extends SuperItem {
@@ -10,6 +10,6 @@ public class Coin extends SuperItem {
         super(gamePanel);
 
         this.name = "coin";
-        this.image = utool.getImage(path + name, FrameConfig.TILE_SIZE, FrameConfig.TILE_SIZE);
+        this.image = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
     }
 }
