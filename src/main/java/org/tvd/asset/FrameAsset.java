@@ -1,6 +1,6 @@
 package org.tvd.asset;
 
-public final class FrameConfig {
+public final class FrameAsset {
 
     public static final int MAX_WORLD_COL = 50;
     public static final int MAX_WORLD_ROW = 50;
