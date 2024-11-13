@@ -1,11 +1,5 @@
 package org.tvd.render;
 
-import org.tvd.config.FrameConfig;
-import org.tvd.frame.GamePanel;
-import org.tvd.frame.Menu;
-import org.tvd.frame.StageOption;
-import org.tvd.utility.UtilityTool;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -15,6 +9,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import org.tvd.config.FrameConfig;
+import org.tvd.frame.GamePanel;
+import org.tvd.frame.Menu;
+import org.tvd.frame.StageOption;
+import org.tvd.utility.UtilityTool;
 
 public class RenderUI {
 
@@ -55,13 +55,20 @@ public class RenderUI {
 
         switch (gamePanel.gameStatus) {
             case GAME_MENU -> renderGameMenuScreen();
-            case GAME_RUNNING -> renderPlayerInfoScreen();
+            case GAME_RUNNING -> {
+                renderGameRunningScreen();
+                renderPlayerInfoScreen();
+            }
             case GAME_PAUSE -> renderGamePauseScreen();
             case GAME_OVER -> renderGameOverScreen();
             case GAME_WIN -> renderGameWinScreen();
             case CHARACTER_ST -> renderPlayerStageScreen();
             case GAME_DIALOGUE -> renderDialogueScreen();
         }
+    }
+
+
+    private void renderGameRunningScreen() {
     }
 
     private void renderGameWinScreen() {
@@ -163,10 +170,9 @@ public class RenderUI {
     /**
      * Draw game menu when game starts
      */
-    public void renderGameMenuScreen() {
+    private void renderGameMenuScreen() {
 
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 76));
-        g2d.setColor(Color.GRAY);
 
         String text = "PIXEL HUNTER";
 
@@ -174,9 +180,12 @@ public class RenderUI {
         int screenX = getCenterPositionForText(text);
         int screenY = FrameConfig.TILE_SIZE * 2;
 
-        g2d.drawString(text, screenX - 3, screenY - 3);
+         g2d.setColor(Color.WHITE);
+            g2d.drawString(text, screenX - 2, screenY - 2);
+            g2d.setColor(Color.GRAY);
+            g2d.drawString(text, screenX, screenY);
+
         g2d.setColor(Color.WHITE);
-        g2d.drawString(text, screenX, screenY);
 
         // Draw player image in panel
         int counter = gamePanel.player.getCounter().drawCounter++;
@@ -231,7 +240,7 @@ public class RenderUI {
     /**
      * Draw game pause screen
      */
-    public void renderGamePauseScreen() {
+    private void renderGamePauseScreen() {
         g2d.setColor(Color.WHITE);
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 85f));
 
@@ -267,7 +276,7 @@ public class RenderUI {
         int screenX = FrameConfig.TILE_SIZE;
         int screenY = FrameConfig.TILE_SIZE;
 
-        // draw player life and energy
+        // Draw player life and energy
         double lifeOnScale = (double) FrameConfig.TILE_SIZE / gamePanel.player.getMaxLife();
         double hpBar = lifeOnScale * gamePanel.player.getLife();
 
@@ -275,7 +284,7 @@ public class RenderUI {
         g2d.fillRect(screenX - 1, screenY - 16, FrameConfig.TILE_SIZE * 3 + 2, 24);
 
         g2d.setColor(new Color(255, 35, 35));
-        g2d.fillRect(screenX, screenY - 15, (int)hpBar * 3, 20);
+        g2d.fillRect(screenX, screenY - 15, (int) hpBar * 3, 20);
 
         double manaOnScale = (double) FrameConfig.TILE_SIZE / gamePanel.player.getMaxEnergy();
         double manaBar = manaOnScale * gamePanel.player.getEnergy();
@@ -285,7 +294,27 @@ public class RenderUI {
         g2d.fillRect(screenX - 1, screenY - 16, FrameConfig.TILE_SIZE * 3 + 2, 24);
 
         g2d.setColor(new Color(255, 255, 153));
-        g2d.fillRect(screenX, screenY - 15, (int)manaBar * 3, 20);
+        g2d.fillRect(screenX, screenY - 15, (int) manaBar * 3, 20);
+
+        // Draw play time
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 32f));
+        String text = convertGamePlayTime();
+        screenX = FrameConfig.SCREEN_WIDTH - FrameConfig.TILE_SIZE * 3;
+        screenY = FrameConfig.TILE_SIZE;
+        g2d.drawString(text, screenX, screenY);
+    }
+
+    private static String convertGamePlayTime() {
+        double seconds = GamePanel.gamePlayTime / GamePanel.FPS;
+        int miliseconds = (int) ((seconds - (int) seconds) * 100);
+        int minutes = (int) seconds / 60;
+        seconds = (int) seconds - minutes * 60;
+
+        return String.format("%s:%s:%s",
+                ("0".repeat(2 - String.valueOf(minutes).length()) + minutes),
+                ("0".repeat(2 - String.valueOf((int)seconds).length()) + (int)seconds),
+                ("0".repeat(2 - String.valueOf(miliseconds).length()) + miliseconds)
+        );
     }
 
     public void renderPlayerStageScreen() {
