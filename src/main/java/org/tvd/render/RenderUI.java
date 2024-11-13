@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 import org.tvd.asset.FrameAsset;
 import org.tvd.frame.GamePanel;
@@ -25,12 +27,27 @@ public class RenderUI {
     private Font font;
 
     // List of message that can be display on the screen
-    public ArrayList<String> message = new ArrayList<>();
+    public ArrayList<String> messages = new ArrayList<>();
 
     // Message counter arraylist
-    public ArrayList<Integer> mcounter = new ArrayList<>();
+    public ArrayList<Integer> messageCounter = new ArrayList<>();
 
     public RenderUI(GamePanel gamePanel) {
+
+
+        messages.add("1");
+        messages.add("2");
+        messages.add("3");
+        messages.add("4");
+
+        messageCounter.add(0);
+
+        messageCounter.add(0);
+
+        messageCounter.add(0);
+
+
+        messageCounter.add(0);
 
         this.gamePanel = gamePanel;
 
@@ -67,8 +84,43 @@ public class RenderUI {
         }
     }
 
-
+    /**
+     * Draw all messages on screen
+     * */
     private void renderGameRunningScreen() {
+        System.out.println("Game running screen");
+        int screeX = FrameAsset.TILE_SIZE;
+        int screeY = FrameAsset.TILE_SIZE * 5;
+
+        g2d.setColor(Color.YELLOW);
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 32f));
+
+        for (int i = 0; i < messages.size() ; i++) {
+
+            if (messages.get(i) == null) {
+                continue;
+            }
+
+            String message = messages.get(i);
+            int currentMessageCounter = messageCounter.get(i);
+
+            g2d.drawString(message, screeX, screeY);
+            screeY += 50;
+
+            messageCounter.set(i, currentMessageCounter + 1);
+
+            boolean maxMessageCountCheck = message.equalsIgnoreCase("1 damage!") || message.contains("Switch weapon");
+            int maxMessageCount = maxMessageCountCheck ? 60 : 150;
+
+            if (currentMessageCounter > maxMessageCount) {
+                try {
+                    messages.remove(i);
+                    messageCounter.remove(i);
+                } catch (ConcurrentModificationException cme) {
+                    System.err.println("RenderUI - render game running screen method: concurrent modification exception.");
+                }
+            }
+        }
     }
 
     private void renderGameWinScreen() {
@@ -304,7 +356,8 @@ public class RenderUI {
         g2d.drawString(text, screenX, screenY);
     }
 
-    private static String convertGamePlayTime() {
+    private String convertGamePlayTime() {
+
         double seconds = GamePanel.gamePlayTime / GamePanel.FPS;
         int miliseconds = (int) ((seconds - (int) seconds) * 100);
         int minutes = (int) seconds / 60;
