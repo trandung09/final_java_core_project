@@ -59,6 +59,20 @@ public abstract class Entity {
         solidAreaDefaultY = solidArea.y;
     }
 
+    public void moving() {
+
+        if (isCollisionOn) {
+            return;
+        }
+
+        switch (direction) {
+            case UP -> worldY -= speed;
+            case DOWN -> worldY += speed;
+            case LEFT -> worldX -= speed;
+            case RIGHT -> worldX += speed;
+        }
+    }
+
     public void update() {}
     public abstract void setAction();
     public abstract void resetAction();
