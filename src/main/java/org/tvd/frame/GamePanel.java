@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 public class GamePanel extends JPanel implements Runnable {
     
     // Fps settings
-    private final int FPS = 60;
+    public static final int FPS = 60;
 
     // Main game thread
     private final Thread gameThread = new Thread(this);
@@ -46,6 +46,8 @@ public class GamePanel extends JPanel implements Runnable {
     // Game level
     public static int gameLevel = 1;
     public static int maxGameLevel = 2;
+
+    public static double gamePlayTime = 0;
 
     // Thread pool
     public final ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -115,6 +117,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
 
         if (gameStatus == GameStatus.GAME_RUNNING) {
+
+            gamePlayTime++;
 
             executor.submit(player::update);
             executor.submit(monsterManager::update);
