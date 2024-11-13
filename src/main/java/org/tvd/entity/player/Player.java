@@ -39,7 +39,10 @@ public class Player extends Entity implements EntityActions {
     private int manas = 0;
     private int maxManas = 10;
 
-    // Index of selected weapon in weapon list
+    // Default index of selected weapon in weapon list
+    // + index 0: axe
+    // + index 1: pick
+    // + index 2: sword
     private int weapon = 0;
 
     @Override
@@ -97,8 +100,28 @@ public class Player extends Entity implements EntityActions {
             attacking();
         }
 
-        moving();
-        counter();
+        if (!pressed.isMovePressed()) {
+            return;
+        }
+
+        switchDirection();
+
+        isCollisionOn = false;
+
+        detection.checkCollisionWithTile(this);
+
+        super.moving();
+
+        if (!pressed.isMovePressed()) {
+            return;
+        }
+
+        if (counter.drawCounter++ < 10) {
+            return;
+        }
+
+        counter.drawCounter = 0;
+        imageChecker = !imageChecker;
     }
 
     @Override
@@ -157,45 +180,6 @@ public class Player extends Entity implements EntityActions {
     }
 
     @Override
-    public void moving() {
-
-        if (!pressed.isMovePressed()) {
-            return;
-        }
-
-        switchDirection();
-
-        isCollisionOn = false;
-
-        detection.checkCollisionWithTile(this);
-
-        if (isCollisionOn) {
-            return;
-        }
-
-        switch (direction) {
-            case UP -> worldY -= speed;
-            case DOWN -> worldY += speed;
-            case LEFT -> worldX -= speed;
-            case RIGHT -> worldX += speed;
-        }
-    }
-
-    private void counter() {
-
-        if (!pressed.isMovePressed()) {
-            return;
-        }
-
-        if (counter.drawCounter++ < 10) {
-            return;
-        }
-
-        counter.drawCounter = 0;
-        imageChecker = !imageChecker;
-    }
-
-    @Override
     public void attacking() {
 
         counter.attackDrawChecker++;
@@ -216,6 +200,8 @@ public class Player extends Entity implements EntityActions {
     public void defending() {
 
     }
+
+    public void
 
     private void switchDirection() {
 
