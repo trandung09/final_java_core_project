@@ -39,7 +39,7 @@ public class TileManager {
         mapName = Map.maps.get(GamePanel.gameLevel);
 
         loadAllTiles();
-        loadMap();
+        loadMapNum();
     }
 
     public void loadAllTiles() {
@@ -84,7 +84,7 @@ public class TileManager {
         setUpForTile(37, "037", true);
     }
 
-    public void loadMap() {
+    public void loadMapNum() {
 
         try {
             File file = new File("src/main/resources/map/" + mapName);
@@ -110,7 +110,7 @@ public class TileManager {
             br.close();
 
         } catch (IOException e) {
-            System.err.println("Could not load map " + mapName + "(" + e.getMessage() + ")");
+            System.err.println("Tile manager - loadMapNum(): could not load map " + mapName + "(" + e.getMessage() + ")");
         }
     }
 
