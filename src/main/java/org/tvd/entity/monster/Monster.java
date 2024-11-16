@@ -1,5 +1,7 @@
 package org.tvd.entity.monster;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
@@ -11,9 +13,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
+@Getter
+@Setter
 public abstract class Monster extends Entity implements EntityActions {
 
     protected int actionNumber = 0;
+
+    protected int experienceReward;
 
     protected boolean abilityAttack;
     protected boolean abilityFly;
@@ -29,15 +35,13 @@ public abstract class Monster extends Entity implements EntityActions {
     public void setAction() {
 
         // Update monster animation
-        counter.drawCounter++;
-        if (counter.drawCounter == 15) {
+        if (counter.drawCounter++ >= 10) {
             counter.drawCounter = 0;
             imageChecker = !imageChecker;
         }
 
         // Randomize monster movement direction
-        counter.actionCounter++;
-        if (counter.actionCounter == 150) {
+        if (counter.actionCounter++ >= 150) {
 
             actionNumber = new Random().nextInt(100) + 1;
 
@@ -157,14 +161,7 @@ public abstract class Monster extends Entity implements EntityActions {
             }
 
             if (isHpBarOn) {
-                double hpBarScale = (double) FrameAsset.TILE_SIZE / maxLife;
-                double hpBar = hpBarScale * life;
-
-                g2d.setColor(new Color(35, 35, 35));
-                g2d.fillRect(screenX - 1, screenY - 16, FrameAsset.TILE_SIZE + 2, 12);
-
-                g2d.setColor(new Color(255, 35, 35));
-                g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
+               renderHpBar(g2d, screenX, screenY);
             }
 
             if (isInvincible) {
@@ -173,5 +170,17 @@ public abstract class Monster extends Entity implements EntityActions {
 
             g2d.drawImage(image, screenX, screenY, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE, null);
         }
+    }
+
+    protected void renderHpBar(Graphics2D g2d, int screenX, int screenY) {
+
+        double hpBarScale = (double) FrameAsset.TILE_SIZE / maxLife;
+        double hpBar = hpBarScale * life;
+
+        g2d.setColor(new Color(35, 35, 35));
+        g2d.fillRect(screenX - 1, screenY - 16, FrameAsset.TILE_SIZE + 2, 12);
+
+        g2d.setColor(new Color(255, 35, 35));
+        g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
     }
 }
