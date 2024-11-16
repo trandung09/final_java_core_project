@@ -61,6 +61,10 @@ public abstract class Entity {
 
     public void moving() {
 
+        if (!gamePanel.keyHandler.pressed.isMovePressed()) {
+            return;
+        }
+
         if (isCollisionOn) {
             return;
         }
@@ -73,7 +77,39 @@ public abstract class Entity {
         }
     }
 
-    public void update() {}
+    public void counter() {
+
+        if (isAttacking) {
+            counter.attackCounter++;
+
+            if (counter.attackCounter > 25) {
+                isAttacking = false;
+                counter.attackCounter = 0;
+            }
+        }
+
+        if (!gamePanel.keyHandler.pressed.isMovePressed()) {
+            return;
+        }
+
+        if (counter.drawCounter++ > 10) {
+            counter.drawCounter = 0;
+        }
+    }
+
+    public void updateAnimationImage() {
+
+        if (counter.drawCounter == 10) {
+            imageChecker = !imageChecker;
+        }
+
+        if (isAttacking) {
+
+            attackImageChecker = counter.attackCounter <= 5;
+        }
+    }
+
+    public abstract void update();
     public abstract void setAction();
     public abstract void resetAction();
     public abstract void render(Graphics2D g2d);
