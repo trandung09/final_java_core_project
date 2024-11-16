@@ -8,6 +8,7 @@ import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
+import org.tvd.entity.monster.Monster;
 import org.tvd.entity.player.weapon.WeaponType;
 import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
@@ -32,7 +33,7 @@ public class Player extends Entity implements EntityActions {
 
     // Player attributes
     private int level = 1;
-    private int exp   = 0;
+    private int experience = 0;
     private int nextLevelExp = 10;
     private int maxEnergy = 100;
     private int energy = maxEnergy;
@@ -43,7 +44,7 @@ public class Player extends Entity implements EntityActions {
     // + index 0: axe
     // + index 1: pick
     // + index 2: sword
-    private int weapon = 0;
+    private int weapon = 1;
 
     @Override
     public BufferedImage[] getDefaultImages() {
@@ -56,14 +57,16 @@ public class Player extends Entity implements EntityActions {
 
         super(gamePanel);
 
-        init();
+        this.init();
 
         this.name = "boy";
 
         this.pressed = keyHandler.pressed;
         this.input = keyHandler;
 
+        this.weapons.add(WeaponType.AXE);
         this.weapons.add(WeaponType.PICK);
+        this.weapons.add(WeaponType.SWORD);
 
         EntitySetter.loadDefaultEntityImage(this);
         EntitySetter.loadAttackEntityImage(this, weapons.get(weapon).name().toLowerCase());
@@ -77,16 +80,17 @@ public class Player extends Entity implements EntityActions {
 
         this.isDead = false;
 
-        worldX = FrameAsset.TILE_SIZE * 8;
-        worldY = FrameAsset.TILE_SIZE * 7;
+        this.worldX = FrameAsset.TILE_SIZE * 8;
+        this.worldY = FrameAsset.TILE_SIZE * 7;
     }
 
     @Override
     public void update() {
 
-        if (life == 0) {
+        if (life <= 0) {
 
             isDead = true;
+            isAlive = false;
         }
 
         if (isDead) {
@@ -97,31 +101,76 @@ public class Player extends Entity implements EntityActions {
         }
 
         if (isAttacking) {
-            attacking();
+            this.attacking();
         }
 
-        if (!pressed.isMovePressed()) {
-            return;
-        }
-
-        switchDirection();
+        this.switchDirection();
 
         isCollisionOn = false;
 
         detection.checkCollisionWithTile(this);
 
+        super.counter();
+        super.updateAnimationImage();
         super.moving();
+    }
 
-        if (!pressed.isMovePressed()) {
+    @Override
+    public void attacking() {
+
+    }
+
+    private void collectItem(int itemIndex) {
+
+        String itemName = gamePanel.itemManager
+                .get(itemIndex)
+                .getName()
+                .toLowerCase(); // Lorem ipsum :]
+
+        switch (itemName) {
+
+            case "coin" -> {
+                // coin
+            }
+            case "key" -> {
+                // key
+            }
+            case "boots" -> {
+                // boots
+            }
+            default -> {}
+        }
+    }
+
+    private void damageMonster(int monsterIndex) {
+
+        Monster monster = gamePanel.monsterManager
+                .get(monsterIndex);
+
+        if (monster == null) {
             return;
         }
 
-        if (counter.drawCounter++ < 10) {
-            return;
-        }
+        if (monster.isAlive()) {
+            if (monster.isInvincible()) {
+                return;
+            }
 
-        counter.drawCounter = 0;
-        imageChecker = !imageChecker;
+            monster.setLife(monster.getLife() - damage);
+            monster.setInvincible(true);
+            monster.resetAction();
+
+            gamePanel.renderUI.messages.add("1 damage!");
+        }
+        else {
+            monster.setAlive(false);
+            monster.setDead(true);
+
+            experience += monster.getExperienceReward();
+
+            gamePanel.renderUI.messages.add("Killed the " + monster.getName() + "!");
+            gamePanel.renderUI.messages.add("Experience +" + monster.getExperienceReward() + "!");
+        }
     }
 
     @Override
@@ -132,6 +181,12 @@ public class Player extends Entity implements EntityActions {
     @Override
     public void resetAction() {
 
+    }
+
+    @Override
+    public void defending() {
+
+        isInvincible = true;
     }
 
     @Override
@@ -178,30 +233,6 @@ public class Player extends Entity implements EntityActions {
 
         g2d.drawImage(image, tempX, tempY, image.getWidth(), image.getHeight(), null);
     }
-
-    @Override
-    public void attacking() {
-
-        counter.attackDrawChecker++;
-
-        if (counter.attackDrawChecker < 5) {
-            attackImageChecker = true;
-        }
-        else if (counter.attackDrawChecker <= 25) {
-            attackImageChecker = false;
-        }
-        else {
-            isAttacking = false;
-            counter.attackDrawChecker = 0;
-        }
-    }
-
-    @Override
-    public void defending() {
-
-    }
-
-    public void
 
     private void switchDirection() {
 
