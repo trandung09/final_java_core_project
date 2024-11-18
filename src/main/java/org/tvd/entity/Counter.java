@@ -8,6 +8,4 @@ public class Counter {
     public int invincibleCounter = 0;
     public int attackCounter = 0;
     public int defineCounter = 0;
-    public int dyingCounter = 0;
-    public int attackDrawChecker = 0;
-}
+    public int dyingCounter = 0;}
