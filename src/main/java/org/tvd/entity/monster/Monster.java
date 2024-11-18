@@ -7,6 +7,8 @@ import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
 import org.tvd.frame.GamePanel;
+import org.tvd.item.ItemFactory;
+import org.tvd.item.SuperItem;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -21,6 +23,8 @@ public abstract class Monster extends Entity implements EntityActions {
 
     protected int experienceReward;
 
+    protected int attackCounter;
+
     protected boolean abilityAttack;
     protected boolean abilityFly;
 
@@ -28,17 +32,20 @@ public abstract class Monster extends Entity implements EntityActions {
         super(gamePanel);
     }
 
+    @Override
+    public void update() {
+
+        super.update();
+
+        moving();
+        counter();
+    }
+
     /**
      * Randomize monster movement direction, update monster animation
      */
     @Override
     public void setAction() {
-
-        // Update monster animation
-        if (counter.drawCounter++ >= 10) {
-            counter.drawCounter = 0;
-            imageChecker = !imageChecker;
-        }
 
         // Randomize monster movement direction
         if (counter.actionCounter++ >= 150) {
@@ -83,14 +90,115 @@ public abstract class Monster extends Entity implements EntityActions {
     }
 
     @Override
+    public void counter() {
+
+        super.counter();
+
+        if (counter.drawCounter++ >= 10) {
+            imageChecker = !imageChecker;
+            counter.drawCounter = 0;
+        }
+    }
+
+    @Override
     public void moving() {
 
-        setAction();
+        super.moving();
     }
 
     @Override
     public void attacking() {
 
+        if (counter.attackCounter <= 5 || counter.attackCounter > 25) {
+            return;
+        }
+
+        int currentWorldX = worldX;
+        int currentWorldY = worldY;
+        int solidAreaWidth = solidArea.width;
+        int solidAreaHeight = solidArea.height;
+
+        switch (direction) {
+            case UP -> worldY -= attackArea.height;
+            case DOWN -> worldY += attackArea.height;
+            case LEFT -> worldX -= attackArea.width;
+            case RIGHT -> worldX += attackArea.width;
+        }
+
+        solidArea.height = attackArea.height;
+        solidArea.width = attackArea.width;
+
+        isCollisionOn = false;
+        detection.checkCollisionWithPlayer(gamePanel.player);
+
+        if (isCollisionOn) {
+            damagePlayer();
+        }
+
+        worldX = currentWorldX;
+        worldY = currentWorldY;
+        solidArea.width = solidAreaWidth;
+        solidArea.height = solidAreaHeight;
+    }
+
+    public void detectPlayerInSight(double defaultRadius ,
+                                    double visibilityRadius,
+                                    int size) {
+
+        int playerWorldX = gamePanel.player.getWorldX() + FrameAsset.TILE_SIZE / 2;
+        int playerWorldY = gamePanel.player.getWorldY() + FrameAsset.TILE_SIZE / 2;
+
+        int tempWorldX = worldX + size;
+        int tempWorldY = worldY + size;
+
+        if (defaultRadius > visibilityRadius) {
+            return;
+        }
+
+        if (tempWorldY > playerWorldY + FrameAsset.TILE_SIZE / 12) {
+            direction = Direction.UP;
+            if (!isCollisionOn) {
+                worldY -= speed;
+            }
+        }
+        else if (tempWorldY < playerWorldY) {
+            direction = Direction.DOWN;
+            if (!isCollisionOn) {
+                worldY += speed;
+            }
+        }
+        else if (tempWorldY == playerWorldY) {
+            if (tempWorldX < playerWorldX) {
+                direction = Direction.RIGHT;
+                if (!isCollisionOn) {
+                    worldX += speed;
+                }
+            }
+            else {
+                direction = Direction.LEFT;
+                if (!isCollisionOn) {
+                    worldX -= speed;
+                }
+            }
+        }
+    }
+
+    public void attackCounter(double distFromPlayer, double attackRadius) {
+
+        if (distFromPlayer <= attackRadius) {
+            if (counter.actionCounter == 100) {
+                isAttacking = true;
+            }
+
+            if (attackCounter++ >= 120) {
+                attackCounter = 0;
+            }
+
+            return;
+        }
+
+        attackCounter = 0;
+        isAttacking = false;
     }
 
     @Override
@@ -100,39 +208,43 @@ public abstract class Monster extends Entity implements EntityActions {
     }
 
     /**
-     * Use A star algorithm to find the path to the player's position
+     * Use DFS algorithm to find the path to the player's position
      */
     public void findPathToPlayer() {
 
     }
 
-    @Override
-    public void update() {
+    public void damagePlayer() {
 
-        moving();
+        boolean isPlayerAlive = gamePanel.player.isAlive();
+        boolean isPlayerInvincible = gamePanel.player.isInvincible();
+        int playerLife = gamePanel.player.getLife();
 
-        if (counter.drawCounter++ > 10) {
-            counter.drawCounter = 0;
-            imageChecker = !imageChecker;
+        if (!isPlayerAlive && isPlayerInvincible) {
+            return;
         }
 
-        if (isHpBarOn) {
+        gamePanel.player.setInvincible(true);
+        gamePanel.player.setLife(playerLife - damage);
+    }
 
-            if (counter.hpBarCounter++ > 500) {
-                isHpBarOn = false;
-                counter.hpBarCounter = 0;
-            }
+    protected SuperItem dying() {
+
+        ItemFactory itemFactory = ItemFactory.getInstance();
+        SuperItem item = null;
+
+        switch (name) {
+            case "orc" -> item = itemFactory.getItem("diamond", gamePanel);
+            case "slimey" -> item = itemFactory.getItem("slimey", gamePanel);
+        };
+
+        if (item != null) {
+
+            item.setWorldX(worldX);
+            item.setWorldY(worldY);
         }
 
-        if (isInvincible) {
-
-            isHpBarOn = true;
-
-            if (counter.invincibleCounter++ > 60) {
-                isInvincible = false;
-                counter.invincibleCounter = 0;
-            }
-        }
+        return item;
     }
 
     @Override
