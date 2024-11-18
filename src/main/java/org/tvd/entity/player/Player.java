@@ -13,9 +13,10 @@ import org.tvd.entity.player.weapon.WeaponType;
 import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
+import org.tvd.frame.GameStatus;
+import org.tvd.render.RenderUI;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +47,6 @@ public class Player extends Entity implements EntityActions {
     // + index 2: sword
     private int weapon = 1;
 
-    @Override
-    public BufferedImage[] getDefaultImages() {
-        return super.getDefaultImages();
-    }
-
     private List<WeaponType> weapons = new ArrayList<>();
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
@@ -78,7 +74,7 @@ public class Player extends Entity implements EntityActions {
         this.maxLife = 700;
         this.life = maxLife;
 
-        this.isDead = false;
+        this.isAlive = true;
 
         this.worldX = FrameAsset.TILE_SIZE * 8;
         this.worldY = FrameAsset.TILE_SIZE * 7;
@@ -87,37 +83,90 @@ public class Player extends Entity implements EntityActions {
     @Override
     public void update() {
 
-        if (life <= 0) {
+        super.update();
 
-            isDead = true;
-            isAlive = false;
+        if (!isAlive) {
+
+            gamePanel.gameStatus = GameStatus.GAME_OVER;
         }
 
-        if (isDead) {
+        if (experience >= nextLevelExp) {
 
-            // gamePanel.gameStatus = GameStatus.GAME_OVER;
-
-            return;
+            levelUp();
         }
 
         if (isAttacking) {
-            this.attacking();
+
+            attacking();
         }
 
         this.switchDirection();
 
-        isCollisionOn = false;
+        counter();
+        moving();
+    }
 
-        detection.checkCollisionWithTile(this);
+    public void levelUp() {
+
+        level++;
+
+        nextLevelExp += level * 10;
+
+        if (damage < 4) {
+            damage++;
+        }
+
+        gamePanel.renderUI.currentDialogueMessage = "You are level " + level + " now!\n"
+                + "You feel stronger!";
+
+        gamePanel.gameStatus = GameStatus.GAME_DIALOGUE;
+    }
+
+    @Override
+    public void counter() {
 
         super.counter();
-        super.updateAnimationImage();
-        super.moving();
+
+        if (!gamePanel.keyHandler.pressed.isMovePressed()) {
+            return;
+        }
+
+        if (counter.drawCounter++ > 10) {
+            imageChecker = !imageChecker;
+            counter.drawCounter = 0;
+        }
     }
 
     @Override
     public void attacking() {
 
+        if (counter.attackCounter <= 5 || counter.attackCounter > 25) {
+            return;
+        }
+
+        int currentWorldX = worldX;
+        int currentWorldY = worldY;
+        int solidAreaWidth = solidArea.width;
+        int solidAreaHeight = solidArea.height;
+
+        switch (direction) {
+            case UP -> worldY -= attackArea.height;
+            case DOWN -> worldY += attackArea.height;
+            case LEFT -> worldX -= attackArea.width;
+            case RIGHT -> worldX += attackArea.width;
+        }
+
+        solidArea.height = attackArea.height;
+        solidArea.width = attackArea.width;
+
+        int monsterIndex = detection.checkCollisionWithOtherEntity(this, gamePanel.monsterManager);
+
+        damageMonster(monsterIndex);
+
+        worldX = currentWorldX;
+        worldY = currentWorldY;
+        solidArea.width = solidAreaWidth;
+        solidArea.height = solidAreaHeight;
     }
 
     private void collectItem(int itemIndex) {
@@ -144,27 +193,27 @@ public class Player extends Entity implements EntityActions {
 
     private void damageMonster(int monsterIndex) {
 
-        Monster monster = gamePanel.monsterManager
+        Monster monster = (Monster) gamePanel.monsterManager
                 .get(monsterIndex);
 
         if (monster == null) {
             return;
         }
 
-        if (monster.isAlive()) {
+        if (monster.getLife() > 0) { // monster.isAlive()
+
             if (monster.isInvincible()) {
                 return;
             }
 
             monster.setLife(monster.getLife() - damage);
             monster.setInvincible(true);
+            monster.setHpBarOn(true);
             monster.resetAction();
 
             gamePanel.renderUI.messages.add("1 damage!");
         }
         else {
-            monster.setAlive(false);
-            monster.setDead(true);
 
             experience += monster.getExperienceReward();
 
