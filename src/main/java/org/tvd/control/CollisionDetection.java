@@ -3,6 +3,9 @@ package org.tvd.control;
 import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Entity;
 import org.tvd.frame.GamePanel;
+import org.tvd.item.SuperItem;
+
+import java.util.ArrayList;
 
 public class CollisionDetection {
 
@@ -13,10 +16,6 @@ public class CollisionDetection {
         this.gamePanel = gamePanel;
     }
 
-    /**
-     * Kiểm tra va chạm của thực thể với các tile trên bản đồ
-     * @param entity thực thể được kiểm tra
-     */
     public void checkCollisionWithTile(Entity entity) {
 
         int worldLeftX = entity.getWorldX() + entity.solidArea.x;
@@ -66,16 +65,87 @@ public class CollisionDetection {
         }
     }
 
-    public void checkCollisionWithOtherEntity(Entity entity, Entity[] other) {
+    public int checkCollisionWithOtherEntity(Entity entity, ArrayList<Entity> other) {
+
+        int entityIndex = -1;
+
+        for (int i = 0; i < other.size(); i++) {
+
+            Entity otherEntity = other.get(i);
+            if (otherEntity == null) {
+                continue;
+            }
+
+            boolean hasCollision = checkCollisionWithOtherEntity(entity, otherEntity);
+
+            if (hasCollision) {
+                entityIndex = i;
+            }
+        }
+
+        return entityIndex;
+    }
+
+    public boolean checkCollisionWithOtherEntity(Entity entity, Entity other) {
+
+        if (isInCollisionArea(entity, other)) {
+            return false;
+        }
+
+        entity.solidArea.x += entity.getWorldX();
+        entity.solidArea.y += entity.getWorldY();
+
+        other.solidArea.x += other.getWorldX();
+        other.solidArea.y += other.getWorldY();
+
+        resetEntityPositionOnCollision(entity);
+
+        if (entity.solidArea.intersects(other.solidArea)) {
+            entity.setCollisionOn(true);
+
+            return true;
+        }
+
+        entity.solidArea.x = entity.solidAreaDefaultX;
+        entity.solidArea.y = entity.solidAreaDefaultY;
+
+        other.solidArea.x = other.solidAreaDefaultX;
+        other.solidArea.y = other.solidAreaDefaultY;
+
+        return false;
+    }
+
+    private boolean isInCollisionArea(Entity entity, Entity other) {
+
+        double detectionRadius = FrameAsset.TILE_SIZE * 5;
+
+        double width = Math.abs(entity.getWorldX() - other.getWorldX());
+        double height = Math.abs(entity.getWorldY() - other.getWorldY());
+
+        double distanceBetweenTowEntity = Math.sqrt(
+                Math.pow(width, 2) + Math.pow(height, 2)
+        );
+
+        return distanceBetweenTowEntity <= detectionRadius;
+    }
+
+    public void checkCollisionWithItem(Entity entity, boolean isPlayer) {
+
 
     }
 
-    public void checkCollisionWithItem(Entity entity, boolean player) {
+    private boolean isInCollisionArea(Entity entity, SuperItem item) {
 
-    }
+        double detectionRadius = FrameAsset.TILE_SIZE * 3;
 
-    public void checkCollisionWithPlayer(Entity entity) {
+        double width = Math.abs(entity.getWorldX() - item.getWorldX());
+        double height = Math.abs(entity.getWorldY() - item.getWorldY());
 
+        double distanceBetweenEntityAndItem = Math.sqrt(
+                Math.pow(width, 2) + Math.pow(height, 2)
+        );
+
+        return distanceBetweenEntityAndItem <= detectionRadius;
     }
 
     private void resetEntityPositionOnCollision(Entity entity) {
