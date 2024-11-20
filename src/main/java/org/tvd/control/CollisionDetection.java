@@ -2,6 +2,7 @@ package org.tvd.control;
 
 import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Entity;
+import org.tvd.entity.monster.Monster;
 import org.tvd.frame.GamePanel;
 import org.tvd.item.SuperItem;
 
@@ -65,14 +66,21 @@ public class CollisionDetection {
         }
     }
 
-    public int checkCollisionWithOtherEntity(Entity entity, ArrayList<Entity> other) {
+    public int checkCollisionWithOtherEntities(Entity entity, ArrayList<Entity> other) {
 
         int entityIndex = -1;
 
         for (int i = 0; i < other.size(); i++) {
 
-            Entity otherEntity = other.get(i);
+            Monster otherEntity = (Monster) other.get(i);
+
             if (otherEntity == null) {
+                continue;
+            }
+            if (otherEntity.isAbilityFly()) {
+                continue;
+            }
+            if (otherEntity == entity) {
                 continue;
             }
 
@@ -88,7 +96,7 @@ public class CollisionDetection {
 
     public boolean checkCollisionWithOtherEntity(Entity entity, Entity other) {
 
-        if (isInCollisionArea(entity, other)) {
+        if (!isInCollisionArea(entity, other)) {
             return false;
         }
 
@@ -117,7 +125,7 @@ public class CollisionDetection {
 
     private boolean isInCollisionArea(Entity entity, Entity other) {
 
-        double detectionRadius = FrameAsset.TILE_SIZE * 5;
+        double detectionRadius = FrameAsset.TILE_SIZE * 10;
 
         double width = Math.abs(entity.getWorldX() - other.getWorldX());
         double height = Math.abs(entity.getWorldY() - other.getWorldY());
