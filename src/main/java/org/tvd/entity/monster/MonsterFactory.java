@@ -15,32 +15,15 @@ public class MonsterFactory {
         }
 
         return switch (name.toLowerCase()) {
-            case "bat" -> {
-                Bat bat = new Bat(gamePanel);
-                EntitySetter.loadDefaultEntityImage(bat);
-
-                yield  bat;
-            }
-            case "skeletonlord" -> {
-                SkeletonLord skeletonLord = new SkeletonLord(gamePanel);
-                EntitySetter.loadDefaultEntityImage(skeletonLord);
-                EntitySetter.loadAttackEntityImage(skeletonLord, "phase2_attack");
-
-                yield skeletonLord;
-            }
+            case "bat" -> new Bat(gamePanel);
+            case "skeletonlord" -> new SkeletonLord(gamePanel);
             case "slimey" -> {
                 Slimey slimey = new Slimey(gamePanel);
                 EntitySetter.loadDefaultEntityImage(slimey);
 
                 yield slimey;
             }
-            case "orc" -> {
-                Orc orc = new Orc(gamePanel);
-                EntitySetter.loadDefaultEntityImage(orc);
-                EntitySetter.loadAttackEntityImage(orc, "attack");
-
-                yield orc;
-            }
+            case "orc" -> new Orc(gamePanel);
             default -> null;
         };
     }
