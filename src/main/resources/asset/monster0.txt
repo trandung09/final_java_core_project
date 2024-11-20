@@ -1,0 +1,4 @@
+bat 300 300
+bat 300 350
+bat 350 300
+skeletonlord 600 650
