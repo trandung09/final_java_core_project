@@ -34,13 +34,26 @@ public class MonsterManager extends ArrayList<Entity> {
 
        for (Entity monster : this) {
            monster.update();
+
+           System.out.println(monster.getName());
        }
     }
 
-    public void render(Graphics2D g2d) {
+    public void renderMonsterCannotFly(Graphics2D g2d) {
 
-        for (Entity monster : this) {
-            monster.render(g2d);
+        for (Entity entity : this) {
+            if (entity instanceof Monster monster && monster.isAbilityAttack()) {
+                monster.render(g2d);
+            }
+        }
+    }
+
+    public void renderMonsterCanFly(Graphics2D g2d) {
+        
+        for (Entity entity : this) {
+            if (entity instanceof Monster monster && monster.isAbilityFly()) {
+                monster.render(g2d);
+            }
         }
     }
 }
