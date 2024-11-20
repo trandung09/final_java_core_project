@@ -15,7 +15,7 @@ Dự án này nhằm mục đích củng cố các kiến thức đã học tron
 - **Build Tool**: Maven
 - **Thư viện hỗ trợ**:
   - `javax.swing` và `java.awt` để xây dựng giao diện đồ họa.
-  - `Lombok` để giảm code lặp.
+  - `Lombok` để giảm việc viết các mã như getter, setter...
 
 ---
 
