@@ -1,5 +1,6 @@
 package org.tvd.entity.monster;
 
+import org.tvd.asset.EntitySetter;
 import org.tvd.entity.Direction;
 import org.tvd.frame.GamePanel;
 
@@ -21,6 +22,8 @@ public class Bat extends Monster {
         this.life = maxLife;
         this.abilityAttack = false;
         this.abilityFly = true;
+
+        EntitySetter.loadDefaultEntityImage(this);
     }
 
     @Override
