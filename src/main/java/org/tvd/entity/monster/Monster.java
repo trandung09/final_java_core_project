@@ -29,6 +29,7 @@ public abstract class Monster extends Entity implements EntityActions {
     protected boolean abilityFly;
 
     public Monster(GamePanel gamePanel) {
+
         super(gamePanel);
     }
 
@@ -36,6 +37,13 @@ public abstract class Monster extends Entity implements EntityActions {
     public void update() {
 
         super.update();
+
+        if (isAttacking) {
+            attacking();
+        }
+
+        detection.checkCollisionWithOtherEntity(this, gamePanel.player);
+        detection.checkCollisionWithOtherEntities(this, gamePanel.monsterManager);
 
         moving();
         counter();
@@ -129,7 +137,9 @@ public abstract class Monster extends Entity implements EntityActions {
         solidArea.width = attackArea.width;
 
         isCollisionOn = false;
-        detection.checkCollisionWithPlayer(gamePanel.player);
+        detection.checkCollisionWithOtherEntity(this, gamePanel.player);
+
+        System.out.println(isCollisionOn);
 
         if (isCollisionOn) {
             damagePlayer();
@@ -141,7 +151,24 @@ public abstract class Monster extends Entity implements EntityActions {
         solidArea.height = solidAreaHeight;
     }
 
-    public void detectPlayerInSight(double defaultRadius ,
+    public void detectPlayerInSight(double visibilityRadius, double attackRadius) {
+
+        int width = worldX - gamePanel.player.getWorldX() + FrameAsset.TILE_SIZE / 2;
+        int height = worldY - gamePanel.player.getWorldY() + FrameAsset.TILE_SIZE / 2;
+        
+        double distFromPlayer = Math.sqrt(
+                Math.pow(width, 2) + Math.pow(height, 2)
+        );
+        
+        if (distFromPlayer < visibilityRadius && distFromPlayer > attackRadius) {
+            
+            findPlayerInSight(distFromPlayer, visibilityRadius, FrameAsset.TILE_SIZE);
+        }
+
+        enableAttackAction(distFromPlayer, attackRadius);
+    }
+
+    public void findPlayerInSight(double distFromPlayer ,
                                     double visibilityRadius,
                                     int size) {
 
@@ -151,7 +178,7 @@ public abstract class Monster extends Entity implements EntityActions {
         int tempWorldX = worldX + size;
         int tempWorldY = worldY + size;
 
-        if (defaultRadius > visibilityRadius) {
+        if (distFromPlayer > visibilityRadius) {
             return;
         }
 
@@ -183,13 +210,14 @@ public abstract class Monster extends Entity implements EntityActions {
         }
     }
 
-    public void attackCounter(double distFromPlayer, double attackRadius) {
+    public void enableAttackAction(double distFromPlayer, double attackRadius) {
 
         if (distFromPlayer <= attackRadius) {
             if (counter.actionCounter == 100) {
                 isAttacking = true;
             }
 
+            // attackCounter != counter.attackCounter
             if (attackCounter++ >= 120) {
                 attackCounter = 0;
             }
@@ -273,24 +301,25 @@ public abstract class Monster extends Entity implements EntityActions {
             }
 
             if (isHpBarOn) {
-               renderHpBar(g2d, screenX, screenY);
+               renderHpBar(g2d, screenX - 1, screenY - 16);
             }
 
             if (isInvincible) {
                 g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.4f));
             }
 
-            g2d.drawImage(image, screenX, screenY, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE, null);
+            g2d.drawImage(image, screenX, screenY, image.getWidth(), image.getHeight(), null);
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
         }
     }
 
     protected void renderHpBar(Graphics2D g2d, int screenX, int screenY) {
 
-        double hpBarScale = (double) FrameAsset.TILE_SIZE / maxLife;
+        double hpBarScale = (double) image.getWidth() / maxLife;
         double hpBar = hpBarScale * life;
 
         g2d.setColor(new Color(35, 35, 35));
-        g2d.fillRect(screenX - 1, screenY - 16, FrameAsset.TILE_SIZE + 2, 12);
+        g2d.fillRect(screenX - 1, screenY - 16, image.getWidth() + 2, 12);
 
         g2d.setColor(new Color(255, 35, 35));
         g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
