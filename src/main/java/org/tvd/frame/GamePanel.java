@@ -44,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final Player player  = new Player(this, keyHandler);
 
     // Game level
-    public static int gameLevel = 1;
+    public static int gameLevel = 0;
     public static int maxGameLevel = 2;
 
     public static double gamePlayTime = 0;
@@ -101,12 +101,15 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameStatus != GameStatus.GAME_MENU) {
 
             tileManager.render(g2d);
-            player.render(g2d);
             eManager.render(g2d);
 
-            monsterManager.render(g2d);
+            monsterManager.renderMonsterCannotFly(g2d);
 
             itemManager.render(g2d);
+
+            player.render(g2d);
+
+            monsterManager.renderMonsterCanFly(g2d);
         }
 
         renderUI.render(g2d);
