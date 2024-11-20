@@ -14,7 +14,6 @@ import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
 import org.tvd.frame.GameStatus;
-import org.tvd.render.RenderUI;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class Player extends Entity implements EntityActions {
         this.speed = 5;
         this.maxLife = 700;
         this.life = maxLife;
-
+        this.damage = 3;
         this.isAlive = true;
 
         this.worldX = FrameAsset.TILE_SIZE * 8;
@@ -100,7 +99,9 @@ public class Player extends Entity implements EntityActions {
             attacking();
         }
 
-        this.switchDirection();
+        int monsterIndex = detection.checkCollisionWithOtherEntities(this, gamePanel.monsterManager);
+
+        switchDirection();
 
         counter();
         moving();
@@ -110,7 +111,7 @@ public class Player extends Entity implements EntityActions {
 
         level++;
 
-        nextLevelExp += level * 10;
+        nextLevelExp += level * 5;
 
         if (damage < 4) {
             damage++;
@@ -159,7 +160,7 @@ public class Player extends Entity implements EntityActions {
         solidArea.height = attackArea.height;
         solidArea.width = attackArea.width;
 
-        int monsterIndex = detection.checkCollisionWithOtherEntity(this, gamePanel.monsterManager);
+        int monsterIndex = detection.checkCollisionWithOtherEntities(this, gamePanel.monsterManager);
 
         damageMonster(monsterIndex);
 
@@ -193,6 +194,10 @@ public class Player extends Entity implements EntityActions {
 
     private void damageMonster(int monsterIndex) {
 
+        if (monsterIndex < 0 || monsterIndex >= gamePanel.monsterManager.size()) {
+            return;
+        }
+
         Monster monster = (Monster) gamePanel.monsterManager
                 .get(monsterIndex);
 
@@ -211,14 +216,14 @@ public class Player extends Entity implements EntityActions {
             monster.setHpBarOn(true);
             monster.resetAction();
 
-            gamePanel.renderUI.messages.add("1 damage!");
-        }
-        else {
+            gamePanel.renderUI.addMessage("1 damage!");
 
-            experience += monster.getExperienceReward();
+            if (monster.getLife() <= 0) {
+                experience += monster.getExperienceReward();
 
-            gamePanel.renderUI.messages.add("Killed the " + monster.getName() + "!");
-            gamePanel.renderUI.messages.add("Experience +" + monster.getExperienceReward() + "!");
+                gamePanel.renderUI.addMessage("Killed the " + monster.getName() + "!");
+                gamePanel.renderUI.addMessage("Experience +" + monster.getExperienceReward() + "!");
+            }
         }
     }
 
