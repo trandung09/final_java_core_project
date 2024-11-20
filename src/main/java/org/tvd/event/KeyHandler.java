@@ -63,6 +63,12 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerDialogueStage(int keyCode) {
+        switch (keyCode) {
+            case KeyEvent.VK_ENTER -> {
+                gamePanel.gameStatus = GameStatus.GAME_RUNNING;
+            }
+            default -> {}
+        }
     }
 
     private void keyHandlerOverGameStage(int keyCode) {
