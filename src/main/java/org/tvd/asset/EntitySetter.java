@@ -1,6 +1,7 @@
 package org.tvd.asset;
 
 import org.tvd.entity.Entity;
+import org.tvd.entity.monster.SkeletonLord;
 import org.tvd.entity.player.Player;
 import org.tvd.utility.UtilityTool;
 
@@ -10,19 +11,20 @@ public class EntitySetter {
 
     private static final UtilityTool utool = new UtilityTool();
 
-    /**
-     * Khởi tạo các thuộc tính là ảnh di chuyển bình thường cho một entity
-     * @param entity đối tượng cần khởi tạo các hình ảnh
-     */
     public static void loadDefaultEntityImage(Entity entity) {
 
-        // Kiểm tra entity là một player hay monster để lấy path đọc ảnh
         String instance = entity instanceof Player ? "player" : "monster";
         String name = entity.getName();
 
         BufferedImage[] images = entity.getDefaultImages();
 
         int width = FrameAsset.TILE_SIZE, height = FrameAsset.TILE_SIZE;
+
+        if ("monster".equals(instance) && entity instanceof SkeletonLord) {
+            width = FrameAsset.TILE_SIZE * 2;
+            height = FrameAsset.TILE_SIZE * 2;
+        }
+
         String path = "/" + instance + "/" + name + "_";
 
         images[0] = utool.getImage(path + "up_1", width, height);
@@ -35,11 +37,6 @@ public class EntitySetter {
         images[7] = utool.getImage(path + "right_2", width, height);
     }
 
-    /**
-     * Khởi tạo các thuộc tính là ảnh di chuyển khi tấn công cho một entity
-     * @param entity thực thể cần được khởi tạo các ảnh khi tấn công
-     * @param weapon hình ảnh vũ khí khi tấn công
-     */
     public static void loadAttackEntityImage(Entity entity, String weapon) {
 
         String instance = entity instanceof Player ? "player" : "monster";
@@ -48,6 +45,12 @@ public class EntitySetter {
         BufferedImage[] images = entity.getAttackImages();
 
         int width = FrameAsset.TILE_SIZE, height = FrameAsset.TILE_SIZE;
+
+        if ("monster".equals(instance) && entity instanceof SkeletonLord) {
+            width = FrameAsset.TILE_SIZE * 2;
+            height = FrameAsset.TILE_SIZE * 2;
+        }
+
         String path = "/" + instance + "/" + name + "_" + weapon + "_";
 
         images[0] = utool.getImage(path + "up_1", width, height * 2);
