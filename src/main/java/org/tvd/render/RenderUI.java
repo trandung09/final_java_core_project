@@ -32,7 +32,7 @@ public class RenderUI {
     public ArrayList<Integer> messageCounter = new ArrayList<>();
 
     // Message will be displayed on the screen dialog box.
-    public static String currentDialogueMessage;
+    public String currentDialogueMessage;
 
     public RenderUI(GamePanel gamePanel) {
 
@@ -79,8 +79,12 @@ public class RenderUI {
         int screeX = FrameAsset.TILE_SIZE;
         int screeY = FrameAsset.TILE_SIZE * 5;
 
-        g2d.setColor(Color.YELLOW);
-        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 32f));
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 25f));
+
+        if (messages.isEmpty()) {
+            return;
+        }
 
         for (int i = 0; i < messages.size() ; i++) {
 
@@ -111,6 +115,12 @@ public class RenderUI {
                 }
             }
         }
+    }
+
+    public void addMessage(String message) {
+
+        messages.add(message);
+        messageCounter.add(0);
     }
 
     private void renderGameWinScreen() {
@@ -389,7 +399,6 @@ public class RenderUI {
     /**
      * Returns the horizontal position of a string (taken from the
      * width of the font size set for the graphics object)
-     * @param text
      */
     private int getCenterPositionForText(String text) {
 
