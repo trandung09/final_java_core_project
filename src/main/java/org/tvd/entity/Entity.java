@@ -32,6 +32,7 @@ public abstract class Entity {
     protected boolean isAttacking;
     protected boolean isInvincible;
     protected boolean isAlive = true;
+    protected boolean isSleeping = false;
     protected boolean imageChecker;
     protected boolean attackImageChecker;
 
@@ -60,11 +61,11 @@ public abstract class Entity {
 
     public void moving() {
 
-        if (!gamePanel.keyHandler.pressed.isMovePressed()) {
+        if (isCollisionOn) {
             return;
         }
 
-        if (isCollisionOn) {
+        if (isSleeping) {
             return;
         }
 
@@ -111,10 +112,6 @@ public abstract class Entity {
         }
 
         setAction();
-
-        isCollisionOn = false;
-
-        detection.checkCollisionWithTile(this);
     }
 
     public abstract void setAction();
