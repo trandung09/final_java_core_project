@@ -14,8 +14,10 @@ import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
 import org.tvd.frame.GameStatus;
+import org.tvd.item.Tent;
 
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,8 @@ public class Player extends Entity implements EntityActions {
     private int manas = 0;
     private int maxManas = 10;
 
+    private Tent tent;
+
     // Default index of selected weapon in weapon list
     // + index 0: axe
     // + index 1: pick
@@ -59,6 +63,8 @@ public class Player extends Entity implements EntityActions {
         this.pressed = keyHandler.pressed;
         this.input = keyHandler;
 
+        this.tent = new Tent(gamePanel);
+
         this.weapons.add(WeaponType.AXE);
         this.weapons.add(WeaponType.PICK);
         this.weapons.add(WeaponType.SWORD);
@@ -74,7 +80,6 @@ public class Player extends Entity implements EntityActions {
         this.life = maxLife;
         this.damage = 3;
         this.isAlive = true;
-
         this.worldX = FrameAsset.TILE_SIZE * 8;
         this.worldY = FrameAsset.TILE_SIZE * 7;
     }
@@ -85,26 +90,39 @@ public class Player extends Entity implements EntityActions {
         super.update();
 
         if (!isAlive) {
-
             gamePanel.gameStatus = GameStatus.GAME_OVER;
         }
 
         if (experience >= nextLevelExp) {
-
             levelUp();
         }
 
         if (isAttacking) {
-
             attacking();
         }
 
-        int monsterIndex = detection.checkCollisionWithOtherEntities(this, gamePanel.monsterManager);
+        isCollisionOn = false;
+
+        detection.checkCollisionWithTile(this);
+        detection.checkCollisionWithOtherEntities(this, gamePanel.monsterManager);
+        int itemIndex = detection.checkCollisionWithItems(this, gamePanel.itemManager);
+
+        collectItem(itemIndex);
 
         switchDirection();
 
         counter();
         moving();
+    }
+
+    @Override
+    public void moving() {
+
+        if (!gamePanel.keyHandler.pressed.isMovePressed()) {
+            return;
+        }
+
+        super.moving();
     }
 
     public void levelUp() {
@@ -172,6 +190,10 @@ public class Player extends Entity implements EntityActions {
 
     private void collectItem(int itemIndex) {
 
+        if (itemIndex < 0 || itemIndex >= weapons.size()) {
+            return;
+        }
+
         String itemName = gamePanel.itemManager
                 .get(itemIndex)
                 .getName()
@@ -188,7 +210,7 @@ public class Player extends Entity implements EntityActions {
             case "boots" -> {
                 // boots
             }
-            default -> {}
+            default -> isSleeping = false;
         }
     }
 
@@ -285,7 +307,16 @@ public class Player extends Entity implements EntityActions {
             }
         }
 
+        if (isSleeping) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
+        }
         g2d.drawImage(image, tempX, tempY, image.getWidth(), image.getHeight(), null);
+        g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
+
+        if (isSleeping) {
+            BufferedImage tentImage = tent.getDefaultImage();
+            g2d.drawImage(tentImage, tempX - FrameAsset.TILE_SIZE / 2, tempY - FrameAsset.TILE_SIZE / 2, tentImage.getWidth(), tentImage.getHeight(), null);
+        }
     }
 
     private void switchDirection() {
