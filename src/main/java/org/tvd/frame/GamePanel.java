@@ -45,7 +45,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Game level
     public static int gameLevel = 0;
-    public static int maxGameLevel = 2;
+    public static int maxGameLevel = 1;
 
     public static double gamePlayTime = 0;
 
@@ -101,15 +101,15 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameStatus != GameStatus.GAME_MENU) {
 
             tileManager.render(g2d);
-            eManager.render(g2d);
 
             monsterManager.renderMonsterCannotFly(g2d);
-
-            itemManager.render(g2d);
 
             player.render(g2d);
 
             monsterManager.renderMonsterCanFly(g2d);
+
+            itemManager.render(g2d);
+            eManager.render(g2d);
         }
 
         renderUI.render(g2d);
@@ -125,6 +125,25 @@ public class GamePanel extends JPanel implements Runnable {
 
             executor.submit(player::update);
             executor.submit(monsterManager::update);
+
+            if (monsterManager.isEmpty()) {
+
+                gameLevelUp();
+            }
+        }
+    }
+
+    public void gameLevelUp() {
+
+        gameLevel++;
+
+        if (gameLevel > maxGameLevel) {
+
+            gameStatus = GameStatus.GAME_WIN;
+        }
+        else {
+            renderUI.currentDialogueMessage = gameLevel == maxGameLevel ? "Game level up" : "Game level down";
+            gameStatus = GameStatus.GAME_DIALOGUE;
         }
     }
 
