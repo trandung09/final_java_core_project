@@ -30,13 +30,18 @@ public class MonsterManager extends ArrayList<Entity> {
 
     public void update() {
 
-       removeIf(o ->  o == null || o.getLife() <=0 || !o.isAlive());
+       removeIf(o ->  o == null || o.getLife() <= 0);
 
        for (Entity monster : this) {
            monster.update();
-
-           System.out.println(monster.getName());
        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+
+        return this.stream().map(o -> (Monster) o)
+                .noneMatch(Monster::isAbilityAttack);
     }
 
     public void renderMonsterCannotFly(Graphics2D g2d) {
