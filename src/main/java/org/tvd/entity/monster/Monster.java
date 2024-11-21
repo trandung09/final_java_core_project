@@ -20,7 +20,6 @@ import java.util.Random;
 public abstract class Monster extends Entity implements EntityActions {
 
     protected int actionNumber = 0;
-
     protected int experienceReward;
 
     protected int attackCounter;
@@ -39,11 +38,17 @@ public abstract class Monster extends Entity implements EntityActions {
         super.update();
 
         if (isAttacking) {
+
             attacking();
         }
 
+        isCollisionOn = false;
+
+        detection.checkCollisionWithItems(this, gamePanel.itemManager);
         detection.checkCollisionWithOtherEntity(this, gamePanel.player);
         detection.checkCollisionWithOtherEntities(this, gamePanel.monsterManager);
+
+        detection.checkCollisionWithTile(this);
 
         moving();
         counter();
@@ -109,12 +114,6 @@ public abstract class Monster extends Entity implements EntityActions {
     }
 
     @Override
-    public void moving() {
-
-        super.moving();
-    }
-
-    @Override
     public void attacking() {
 
         if (counter.attackCounter <= 5 || counter.attackCounter > 25) {
@@ -138,8 +137,6 @@ public abstract class Monster extends Entity implements EntityActions {
 
         isCollisionOn = false;
         detection.checkCollisionWithOtherEntity(this, gamePanel.player);
-
-        System.out.println(isCollisionOn);
 
         if (isCollisionOn) {
             damagePlayer();
@@ -182,6 +179,10 @@ public abstract class Monster extends Entity implements EntityActions {
             return;
         }
 
+        if (gamePanel.player.isSleeping()) {
+            return;
+        }
+
         if (tempWorldY > playerWorldY + FrameAsset.TILE_SIZE / 12) {
             direction = Direction.UP;
             if (!isCollisionOn) {
@@ -213,7 +214,7 @@ public abstract class Monster extends Entity implements EntityActions {
     public void enableAttackAction(double distFromPlayer, double attackRadius) {
 
         if (distFromPlayer <= attackRadius) {
-            if (counter.actionCounter == 100) {
+            if (counter.actionCounter == 100 && !gamePanel.player.isSleeping()) {
                 isAttacking = true;
             }
 
