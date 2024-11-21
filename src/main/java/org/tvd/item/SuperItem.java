@@ -19,7 +19,7 @@ public abstract class SuperItem {
     protected GamePanel gamePanel;
 
     protected BufferedImage defaultImage;
-    protected BufferedImage otherImage;
+    protected int imageSize;
     protected UtilityTool utool;
 
     protected boolean collision;
@@ -28,9 +28,9 @@ public abstract class SuperItem {
     protected int worldX;
     protected int worldY;
 
-    protected Rectangle solidArea;
-    protected int solidAreaDefaultX;
-    protected int solidAreaDefaultY;
+    public Rectangle solidArea;
+    public int solidAreaDefaultX;
+    public int solidAreaDefaultY;
 
     public SuperItem(GamePanel gamePanel) {
 
@@ -42,11 +42,10 @@ public abstract class SuperItem {
     public void init() {
 
         this.collision = true;
-
+        this.imageSize = FrameAsset.TILE_SIZE;
         this.utool = new UtilityTool();
 
         this.solidArea = new Rectangle(0, 0, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
-
         this.solidAreaDefaultX = solidArea.x;
         this.solidAreaDefaultY = solidArea.y;
     }
@@ -61,7 +60,7 @@ public abstract class SuperItem {
                 worldY + FrameAsset.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
                 worldY - FrameAsset.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
         ) {
-            g2d.drawImage(defaultImage, screenX, screenY, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE, null);
+            g2d.drawImage(defaultImage, screenX, screenY, defaultImage.getWidth(), defaultImage.getHeight(), null);
         }
     }
 }

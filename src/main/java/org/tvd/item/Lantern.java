@@ -1,6 +1,6 @@
 package org.tvd.item;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.asset.ItemSetter;
 import org.tvd.frame.GamePanel;
 
 public class Lantern extends SuperItem {
@@ -10,6 +10,6 @@ public class Lantern extends SuperItem {
         super(gamePanel);
 
         this.name = "lantern";
-        this.defaultImage = utool.getImage(path + name, FrameAsset.TILE_SIZE, FrameAsset.TILE_SIZE);
+        ItemSetter.loadDefaultItemImage(this);
     }
 }
