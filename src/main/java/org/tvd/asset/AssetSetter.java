@@ -23,21 +23,13 @@ public class AssetSetter {
     private static final ItemFactory itemFactory = ItemFactory.getInstance();
     private static final MonsterFactory monsterFactory = MonsterFactory.getInstance();
 
-    /**
-     * Khởi tạo tất cả các item với các thông tin được đọc từ file
-     *
-     * @param gamePanel là tham số cho hàm tạo các item
-     * @param itemManager quản lý các item như một array list
-     */
     public static void loadAllItem(GamePanel gamePanel, ItemManager itemManager) {
 
         int level = GamePanel.gameLevel;
 
-        // Lấy tên file
         String itemInitFilePath = resourcePath + "item" + level + ".txt";
         try {
 
-            // Sử dụng lớp tiện ích Files để tạo một đối tượng BufferedReader đọc file
             br = Files.newBufferedReader(Path.of(itemInitFilePath), StandardCharsets.UTF_8);
 
             while (true) {
@@ -61,25 +53,13 @@ public class AssetSetter {
                 itemManager.add(item);
             }
 
+            br.close();
+
         } catch (IOException e) {
             System.err.println("AssetSetter: error reading file.");
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    System.err.println("AssetSetter: error closing file.");
-                }
-            }
         }
     }
 
-    /**
-     * Khởi tạo tất cả các monster với các thông tin được đọc từ file
-     *
-     * @param gamePanel là tham số cho hàm tạo các item
-     * @param monsterManager quản lý các monster như một array list
-     */
     public static void loadAllMonster(GamePanel gamePanel, MonsterManager monsterManager) {
 
         int level = GamePanel.gameLevel;
@@ -106,21 +86,18 @@ public class AssetSetter {
                     continue;
                 }
 
+                System.out.println(param[0]);
+
                 monster.setWorldX(mpX);
                 monster.setWorldY(mpY);
 
                 monsterManager.add(monster);
             }
+
+            br.close();
+
         } catch (IOException e) {
-            System.err.println("AssetSetter: error reading file.");
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    System.err.println("AssetSetter: error closing file.");
-                }
-            }
+            System.err.println("AssetSetter: (monster) _ error reading file.");
         }
     }
 }
