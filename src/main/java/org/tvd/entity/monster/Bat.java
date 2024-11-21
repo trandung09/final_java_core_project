@@ -29,15 +29,11 @@ public class Bat extends Monster {
     @Override
     public void update() {
 
-        super.update();
+        setAction();
 
         isCollisionOn = false;
 
-        switch (direction) {
-            case UP -> worldY -= speed;
-            case DOWN -> worldY += speed;
-            case LEFT -> worldX -= speed;
-            case RIGHT -> worldX += speed;
-        }
+        moving();
+        counter();
     }
 }
