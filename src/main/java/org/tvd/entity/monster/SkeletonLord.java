@@ -4,7 +4,8 @@ import org.tvd.asset.EntitySetter;
 import org.tvd.entity.Direction;
 import org.tvd.frame.GamePanel;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class SkeletonLord extends Monster {
     
