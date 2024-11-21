@@ -3,6 +3,7 @@ package org.tvd.control;
 import org.tvd.asset.FrameAsset;
 import org.tvd.entity.Entity;
 import org.tvd.entity.monster.Monster;
+import org.tvd.entity.player.Player;
 import org.tvd.frame.GamePanel;
 import org.tvd.item.SuperItem;
 
@@ -24,39 +25,34 @@ public class CollisionDetection {
         int worldTopY = entity.getWorldY() + entity.solidArea.y;
         int worldBottomY = entity.getWorldY() + entity.solidArea.y + entity.solidArea.height;
 
-        int playerLeftCol = worldLeftX / FrameAsset.TILE_SIZE;
-        int playerRightCol = worldRightX / FrameAsset.TILE_SIZE;
-        int playerTopRow = worldTopY / FrameAsset.TILE_SIZE;
-        int playerBottomRow = worldBottomY / FrameAsset.TILE_SIZE;
+        int entityLeftCol = worldLeftX / FrameAsset.TILE_SIZE;
+        int entityRightCol = worldRightX / FrameAsset.TILE_SIZE;
+        int entityTopRow = worldTopY / FrameAsset.TILE_SIZE;
+        int entityBottomRow = worldBottomY / FrameAsset.TILE_SIZE;
 
         int tileOne, tileTwo;
 
         switch (entity.getDirection()) {
-
             case UP -> {
-                playerTopRow = (worldTopY - entity.getSpeed()) / FrameAsset.TILE_SIZE;
-                tileOne = gamePanel.tileManager.getMaps()[playerTopRow][playerLeftCol];
-                tileTwo = gamePanel.tileManager.getMaps()[playerTopRow][playerRightCol];
+                entityTopRow = (worldTopY - entity.getSpeed()) / FrameAsset.TILE_SIZE;
+                tileOne = gamePanel.tileManager.getMaps()[entityTopRow][entityLeftCol];
+                tileTwo = gamePanel.tileManager.getMaps()[entityTopRow][entityRightCol];
             }
-
             case DOWN -> {
-                playerBottomRow = (worldBottomY + entity.getSpeed()) / FrameAsset.TILE_SIZE;
-                tileOne = gamePanel.tileManager.getMaps()[playerBottomRow][playerLeftCol];
-                tileTwo = gamePanel.tileManager.getMaps()[playerBottomRow][playerRightCol];
+                entityBottomRow = (worldBottomY + entity.getSpeed()) / FrameAsset.TILE_SIZE;
+                tileOne = gamePanel.tileManager.getMaps()[entityBottomRow][entityLeftCol];
+                tileTwo = gamePanel.tileManager.getMaps()[entityBottomRow][entityRightCol];
             }
-
             case LEFT -> {
-                playerLeftCol = (worldLeftX - entity.getSpeed()) / FrameAsset.TILE_SIZE;
-                tileOne = gamePanel.tileManager.getMaps()[playerTopRow][playerLeftCol];
-                tileTwo = gamePanel.tileManager.getMaps()[playerBottomRow][playerLeftCol];
+                entityLeftCol = (worldLeftX - entity.getSpeed()) / FrameAsset.TILE_SIZE;
+                tileOne = gamePanel.tileManager.getMaps()[entityTopRow][entityLeftCol];
+                tileTwo = gamePanel.tileManager.getMaps()[entityBottomRow][entityLeftCol];
             }
-
             case RIGHT -> {
-                playerRightCol = (worldRightX + entity.getSpeed()) / FrameAsset.TILE_SIZE;
-                tileOne = gamePanel.tileManager.getMaps()[playerTopRow][playerRightCol];
-                tileTwo = gamePanel.tileManager.getMaps()[playerBottomRow][playerRightCol];
+                entityRightCol = (worldRightX + entity.getSpeed()) / FrameAsset.TILE_SIZE;
+                tileOne = gamePanel.tileManager.getMaps()[entityTopRow][entityRightCol];
+                tileTwo = gamePanel.tileManager.getMaps()[entityBottomRow][entityRightCol];
             }
-
             default ->
                 throw new IllegalStateException("Unexpected value: " + entity.getDirection());
         }
@@ -96,6 +92,8 @@ public class CollisionDetection {
 
     public boolean checkCollisionWithOtherEntity(Entity entity, Entity other) {
 
+        boolean isCollisionOn = false;
+
         if (!isInCollisionArea(entity, other)) {
             return false;
         }
@@ -110,8 +108,7 @@ public class CollisionDetection {
 
         if (entity.solidArea.intersects(other.solidArea)) {
             entity.setCollisionOn(true);
-
-            return true;
+            isCollisionOn = true;
         }
 
         entity.solidArea.x = entity.solidAreaDefaultX;
@@ -120,7 +117,7 @@ public class CollisionDetection {
         other.solidArea.x = other.solidAreaDefaultX;
         other.solidArea.y = other.solidAreaDefaultY;
 
-        return false;
+        return isCollisionOn;
     }
 
     private boolean isInCollisionArea(Entity entity, Entity other) {
@@ -137,10 +134,61 @@ public class CollisionDetection {
         return distanceBetweenTowEntity <= detectionRadius;
     }
 
-    public void checkCollisionWithItem(Entity entity, boolean isPlayer) {
+    public int checkCollisionWithItems(Entity entity, ArrayList<SuperItem> items) {
 
+        int itemIndex = -1;
 
+        for (int i = 0; i < items.size(); i++) {
+
+            SuperItem item = items.get(i);
+
+            if (item == null) {
+                continue;
+            }
+
+            boolean hasCollision = checkCollisionWithItem(entity, item);
+
+            if (hasCollision && entity instanceof Player) {
+                itemIndex = i;
+            }
+        }
+
+        return itemIndex;
     }
+
+    private boolean checkCollisionWithItem(Entity entity, SuperItem item) {
+
+        boolean isCollisionOn = false;
+
+        if (!isInCollisionArea(entity, item)) {
+            return false;
+        }
+        if (!item.isCollision() && entity instanceof Player) {
+            return false;
+        }
+
+        entity.solidArea.x += entity.getWorldX();
+        entity.solidArea.y += entity.getWorldY();
+
+        item.solidArea.x += item.getWorldX();
+        item.solidArea.y += item.getWorldY();
+
+        resetEntityPositionOnCollision(entity);
+
+        if (entity.solidArea.intersects(item.solidArea)) {
+            entity.setCollisionOn(true);
+            isCollisionOn = true;
+        }
+
+        entity.solidArea.x = entity.solidAreaDefaultX;
+        entity.solidArea.y = entity.solidAreaDefaultY;
+
+        item.solidArea.x = item.solidAreaDefaultX;
+        item.solidArea.y = item.solidAreaDefaultY;
+
+        return isCollisionOn;
+    }
+
 
     private boolean isInCollisionArea(Entity entity, SuperItem item) {
 
