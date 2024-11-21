@@ -46,6 +46,10 @@ public class KeyHandler implements KeyListener {
                     gamePanel.gameStatus = GameStatus.GAME_PAUSE;
                 }
             }
+            case KeyEvent.VK_SPACE -> {
+                pressed.space = true;
+                gamePanel.player.setSleeping(!gamePanel.player.isSleeping());
+            }
             case KeyEvent.VK_ENTER -> gamePanel.player.setAttacking(true);
             case KeyEvent.VK_L -> pressed.lighting = !pressed.lighting;
             default -> {}
@@ -154,7 +158,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_D -> pressed.right = false;
             case KeyEvent.VK_W -> pressed.up = false;
             case KeyEvent.VK_S -> pressed.down = false;
-            case KeyEvent.VK_ENTER ->pressed.enter = false;
+            case KeyEvent.VK_ENTER -> pressed.enter = false;
+            case KeyEvent.VK_SPACE -> pressed.space = false;
             default -> {}
         }
     }
