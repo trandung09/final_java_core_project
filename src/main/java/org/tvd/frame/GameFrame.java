@@ -1,9 +1,11 @@
 package org.tvd.frame;
 
 import org.tvd.asset.FrameAsset;
+import org.tvd.utility.UtilityTool;
 
-import java.awt.Dimension;
+import java.awt.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class GameFrame extends JFrame {
@@ -16,6 +18,8 @@ public class GameFrame extends JFrame {
 
         this.addKeyListener(gamePanel.keyHandler);
 
+        this.setTitle("Pixel hunter");
+        this.setIconImage(new UtilityTool().getImage("/item/lantern", 30, 30));
         this.setResizable(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(new Dimension(FrameAsset.SCREEN_WIDTH, FrameAsset.SCREEN_HEIGHT));
