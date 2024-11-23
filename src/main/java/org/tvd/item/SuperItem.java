@@ -2,7 +2,8 @@ package org.tvd.item;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.tvd.asset.FrameAsset;
+import org.tvd.entity.player.Player;
+import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
 

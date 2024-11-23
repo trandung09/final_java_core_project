@@ -1,6 +1,6 @@
 package org.tvd.item;
 
-import org.tvd.asset.ItemSetter;
+import org.tvd.setter.ItemSetter;
 import org.tvd.frame.GamePanel;
 
 public class Boots extends SuperItem {

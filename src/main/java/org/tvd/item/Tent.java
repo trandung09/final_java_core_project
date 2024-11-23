@@ -1,7 +1,7 @@
 package org.tvd.item;
 
-import org.tvd.asset.FrameAsset;
-import org.tvd.asset.ItemSetter;
+import org.tvd.setter.FrameAsset;
+import org.tvd.setter.ItemSetter;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Rectangle;
