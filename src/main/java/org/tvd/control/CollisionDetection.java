@@ -1,6 +1,6 @@
 package org.tvd.control;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.setter.FrameAsset;
 import org.tvd.entity.Entity;
 import org.tvd.entity.monster.Monster;
 import org.tvd.entity.player.Player;
@@ -93,10 +93,6 @@ public class CollisionDetection {
     public boolean checkCollisionWithOtherEntity(Entity entity, Entity other) {
 
         boolean isCollisionOn = false;
-
-        if (!isInCollisionArea(entity, other)) {
-            return false;
-        }
 
         entity.solidArea.x += entity.getWorldX();
         entity.solidArea.y += entity.getWorldY();
