@@ -1,4 +1,4 @@
-package org.tvd.asset;
+package org.tvd.setter;
 
 public class FrameAsset {
 

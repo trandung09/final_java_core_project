@@ -1,4 +1,4 @@
-package org.tvd.asset;
+package org.tvd.setter;
 
 import org.tvd.entity.Entity;
 import org.tvd.entity.monster.SkeletonLord;
