@@ -3,7 +3,8 @@ package org.tvd.map;
 import lombok.Data;
 import lombok.Getter;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.entity.player.Player;
+import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
 
@@ -124,17 +125,18 @@ public class TileManager {
 
             worldX = col * FrameAsset.TILE_SIZE;
             worldY = row * FrameAsset.TILE_SIZE;
-            screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.getScreenX();
-            screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.getScreenY();
+            screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.screenX;
+            screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.screenY;
 
-            if (worldX + FrameAsset.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
+             if (worldX + FrameAsset.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
                     worldX - FrameAsset.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
                     worldY + FrameAsset.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
                     worldY - FrameAsset.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
-            ) {
+             ) {
 
-                g2d.drawImage(tiles[tileIndex].image, screenX, screenY, null);
-            }
+
+                 g2d.drawImage(tiles[tileIndex].image, screenX, screenY, null);
+             }
 
             col++;
             if (col == FrameAsset.MAX_WORLD_COL) {
