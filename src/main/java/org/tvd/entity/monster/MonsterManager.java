@@ -3,7 +3,8 @@ package org.tvd.entity.monster;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.tvd.asset.AssetSetter;
+import org.tvd.entity.Projectile;
+import org.tvd.setter.AssetSetter;
 import org.tvd.entity.Entity;
 import org.tvd.frame.GamePanel;
 
@@ -35,6 +36,19 @@ public class MonsterManager extends ArrayList<Entity> {
        for (Entity monster : this) {
            monster.update();
        }
+
+       for (Entity monster : this) {
+           if (monster.getProjectiles().isEmpty()) {
+               continue;
+           }
+
+           ArrayList<Projectile> projectiles = monster.getProjectiles();
+           projectiles.removeIf(o -> o.getLife() < 0);
+
+           for (Projectile projectile : projectiles) {
+               projectile.update();
+           }
+       }
     }
 
     @Override
@@ -58,6 +72,17 @@ public class MonsterManager extends ArrayList<Entity> {
         for (Entity entity : this) {
             if (entity instanceof Monster monster && monster.isAbilityFly()) {
                 monster.render(g2d);
+            }
+        }
+    }
+
+    public void renderProjectileOfMonster(Graphics2D g2d) {
+        for (Entity entity : this) {
+            if (entity.getProjectiles().isEmpty()) {
+                continue;
+            }
+            for (Projectile projectile : entity.getProjectiles()) {
+                projectile.render(g2d);
             }
         }
     }
