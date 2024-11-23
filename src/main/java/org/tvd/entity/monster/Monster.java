@@ -1,19 +1,18 @@
 package org.tvd.entity.monster;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.tvd.asset.FrameAsset;
+import java.awt.Rectangle;
+import java.util.Random;
+
 import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
 import org.tvd.frame.GamePanel;
 import org.tvd.item.ItemFactory;
 import org.tvd.item.SuperItem;
+import org.tvd.setter.FrameAsset;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.Random;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -30,6 +29,21 @@ public abstract class Monster extends Entity implements EntityActions {
     public Monster(GamePanel gamePanel) {
 
         super(gamePanel);
+
+        init();
+    }
+
+    public void init() {
+
+        this.isAlive = true;
+        this.abilityAttack = true;
+        this.abilityFly = false;
+        this.direction = Direction.RIGHT;
+
+        this.solidArea = new Rectangle(8, 8, 40, 40);
+        this.solidAreaDefaultX = solidArea.x;
+        this.solidAreaDefaultY = solidArea.y;
+        this.attackArea = new Rectangle(0, 0, 45, 45);
     }
 
     @Override
@@ -93,12 +107,14 @@ public abstract class Monster extends Entity implements EntityActions {
 
         // Fix monster position when player damages
         if (!isCollisionOn) {
-            switch (direction) {
-                case DOWN -> worldY -= speed * 15;
-                case UP -> worldY += speed * 15;
-                case LEFT -> worldX += speed * 15;
-                case RIGHT ->  worldX -= speed * 15;
-            }
+           
+        }
+
+         switch (direction) {
+            case DOWN -> worldY -= speed * 15;
+            case UP -> worldY += speed * 15;
+            case LEFT -> worldX += speed * 15;
+            case RIGHT ->  worldX -= speed * 15;
         }
     }
 
@@ -156,24 +172,20 @@ public abstract class Monster extends Entity implements EntityActions {
         double distFromPlayer = Math.sqrt(
                 Math.pow(width, 2) + Math.pow(height, 2)
         );
-        
-        if (distFromPlayer < visibilityRadius && distFromPlayer > attackRadius) {
-            
-            findPlayerInSight(distFromPlayer, visibilityRadius, FrameAsset.TILE_SIZE);
-        }
 
         enableAttackAction(distFromPlayer, attackRadius);
+        findPlayerInSight(distFromPlayer, visibilityRadius, FrameAsset.TILE_SIZE);
     }
 
     public void findPlayerInSight(double distFromPlayer ,
                                     double visibilityRadius,
                                     int size) {
 
-        int playerWorldX = gamePanel.player.getWorldX() + FrameAsset.TILE_SIZE / 2;
-        int playerWorldY = gamePanel.player.getWorldY() + FrameAsset.TILE_SIZE / 2;
-
         int tempWorldX = worldX + size;
         int tempWorldY = worldY + size;
+
+        int playerWorldX = gamePanel.player.getWorldX() + FrameAsset.TILE_SIZE / 2;
+        int playerWorldY = gamePanel.player.getWorldY() + FrameAsset.TILE_SIZE / 2;
 
         if (distFromPlayer > visibilityRadius) {
             return;
@@ -214,20 +226,22 @@ public abstract class Monster extends Entity implements EntityActions {
     public void enableAttackAction(double distFromPlayer, double attackRadius) {
 
         if (distFromPlayer <= attackRadius) {
-            if (counter.actionCounter == 100 && !gamePanel.player.isSleeping()) {
+
+            if (counter.actionCounter == 80 && !gamePanel.player.isSleeping()) {
                 isAttacking = true;
             }
 
+            attackCounter++;
+
             // attackCounter != counter.attackCounter
-            if (attackCounter++ >= 120) {
+            if (attackCounter >= 120) {
                 attackCounter = 0;
             }
-
-            return;
         }
-
-        attackCounter = 0;
-        isAttacking = false;
+        else {
+            attackCounter = 0;
+            isAttacking = false;
+        }
     }
 
     @Override
@@ -249,12 +263,12 @@ public abstract class Monster extends Entity implements EntityActions {
         boolean isPlayerInvincible = gamePanel.player.isInvincible();
         int playerLife = gamePanel.player.getLife();
 
-        if (!isPlayerAlive && isPlayerInvincible) {
+        if (!isPlayerAlive || isPlayerInvincible) {
             return;
         }
 
-        gamePanel.player.setInvincible(true);
         gamePanel.player.setLife(playerLife - damage);
+        gamePanel.player.setInvincible(true);
     }
 
     protected SuperItem dying() {
@@ -265,7 +279,7 @@ public abstract class Monster extends Entity implements EntityActions {
         switch (name) {
             case "orc" -> item = itemFactory.getItem("diamond", gamePanel);
             case "slimey" -> item = itemFactory.getItem("slimey", gamePanel);
-        };
+        }
 
         if (item != null) {
 
@@ -274,55 +288,5 @@ public abstract class Monster extends Entity implements EntityActions {
         }
 
         return item;
-    }
-
-    @Override
-    public void render(Graphics2D g2d) {
-
-        int screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.screenX;
-        int screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.screenY;
-
-        if (worldX + FrameAsset.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX) {
-
-            for (int i = 0; i < 8; i++) {
-                if (defaultImages[i] == null) {
-                    System.out.println("Image " + i + " = null");
-                }
-            }
-
-            if (image == null) {
-                image = defaultImages[6];
-            }
-
-            switch (direction) {
-                case UP -> image = imageChecker ? defaultImages[0] : defaultImages[1];
-                case DOWN -> image = imageChecker ? defaultImages[2] : defaultImages[3];
-                case LEFT -> image = imageChecker ? defaultImages[4] : defaultImages[5];
-                case RIGHT -> image = imageChecker ? defaultImages[6] : defaultImages[7];
-            }
-
-            if (isHpBarOn) {
-               renderHpBar(g2d, screenX - 1, screenY - 16);
-            }
-
-            if (isInvincible) {
-                g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.4f));
-            }
-
-            g2d.drawImage(image, screenX, screenY, image.getWidth(), image.getHeight(), null);
-            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
-        }
-    }
-
-    protected void renderHpBar(Graphics2D g2d, int screenX, int screenY) {
-
-        double hpBarScale = (double) image.getWidth() / maxLife;
-        double hpBar = hpBarScale * life;
-
-        g2d.setColor(new Color(35, 35, 35));
-        g2d.fillRect(screenX - 1, screenY - 16, image.getWidth() + 2, 12);
-
-        g2d.setColor(new Color(255, 35, 35));
-        g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
     }
 }
