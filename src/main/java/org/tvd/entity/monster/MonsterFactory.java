@@ -1,6 +1,5 @@
 package org.tvd.entity.monster;
 
-import org.tvd.asset.EntitySetter;
 import org.tvd.frame.GamePanel;
 
 public class MonsterFactory {
@@ -17,12 +16,7 @@ public class MonsterFactory {
         return switch (name.toLowerCase()) {
             case "bat" -> new Bat(gamePanel);
             case "skeletonlord" -> new SkeletonLord(gamePanel);
-            case "slimey" -> {
-                Slimey slimey = new Slimey(gamePanel);
-                EntitySetter.loadDefaultEntityImage(slimey);
-
-                yield slimey;
-            }
+            case "slimey" -> new Slimey(gamePanel);
             case "orc" -> new Orc(gamePanel);
             default -> null;
         };
