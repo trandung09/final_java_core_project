@@ -7,5 +7,7 @@ public class Counter {
     public int hpBarCounter = 0;
     public int invincibleCounter = 0;
     public int attackCounter = 0;
-    public int defineCounter = 0;
-    public int dyingCounter = 0;}
+    public int speedUpCounter = 0;
+    public int shootCounter = 0;
+    public int dyingCounter = 0;
+}
