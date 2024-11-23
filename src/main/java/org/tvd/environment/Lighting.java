@@ -1,6 +1,6 @@
 package org.tvd.environment;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
 
 import java.awt.*;
@@ -72,7 +72,7 @@ public class Lighting {
 
         } else{
             for (int i = 0; i < 12 ; i++) {
-                color[i] = new Color(0, 0, 0.1f, 0.3f);
+                color[i] = new Color(0, 0, 0.1f, 0.1f);
             }
         }
     }
