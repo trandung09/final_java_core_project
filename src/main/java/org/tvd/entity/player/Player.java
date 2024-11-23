@@ -3,8 +3,8 @@ package org.tvd.entity.player;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.tvd.asset.EntitySetter;
-import org.tvd.asset.FrameAsset;
+import org.tvd.setter.EntitySetter;
+import org.tvd.setter.FrameAsset;
 import org.tvd.entity.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
@@ -16,7 +16,8 @@ import org.tvd.frame.GamePanel;
 import org.tvd.frame.GameStatus;
 import org.tvd.item.Tent;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +38,12 @@ public class Player extends Entity implements EntityActions {
     private int level = 1;
     private int experience = 0;
     private int nextLevelExp = 10;
-    private int maxEnergy = 100;
-    private int energy = maxEnergy;
-    private int manas = 0;
-    private int maxManas = 10;
+    private int maxEnergy;
+    private int energy;
+    private int manas;
+    private int maxManas;
+
+    private boolean isSpeedUp = false;
 
     private Tent tent;
 
@@ -76,10 +79,15 @@ public class Player extends Entity implements EntityActions {
     public void init() {
 
         this.speed = 5;
-        this.maxLife = 700;
+        this.maxLife = 50;
         this.life = maxLife;
-        this.damage = 3;
+        this.damage = 2;
+        this.level = 1;
+        this.nextLevelExp = 10;
+        this.experience = 0; 
         this.isAlive = true;
+        this.maxEnergy = 100;
+        this.energy = maxEnergy;
         this.worldX = FrameAsset.TILE_SIZE * 8;
         this.worldY = FrameAsset.TILE_SIZE * 7;
     }
@@ -131,6 +139,8 @@ public class Player extends Entity implements EntityActions {
 
         nextLevelExp += level * 5;
 
+        gamePanel.sound.playSE(4);
+
         if (damage < 4) {
             damage++;
         }
@@ -145,6 +155,14 @@ public class Player extends Entity implements EntityActions {
     public void counter() {
 
         super.counter();
+
+        if (isSpeedUp) {
+            if (counter.speedUpCounter++ > 1800) {
+                isSpeedUp = false;
+                speed -= 2;
+                counter.speedUpCounter = 0;
+            }
+        }
 
         if (!gamePanel.keyHandler.pressed.isMovePressed()) {
             return;
@@ -197,7 +215,7 @@ public class Player extends Entity implements EntityActions {
         String itemName = gamePanel.itemManager
                 .get(itemIndex)
                 .getName()
-                .toLowerCase(); // Lorem ipsum :]
+                .toLowerCase();
 
         switch (itemName) {
 
@@ -208,7 +226,12 @@ public class Player extends Entity implements EntityActions {
                 // key
             }
             case "boots" -> {
-                // boots
+                isSpeedUp = true;
+                speed += 2;
+
+                gamePanel.renderUI.addMessage("Speed up!");
+                gamePanel.sound.playSE(5);
+                gamePanel.itemManager.set(itemIndex, null);
             }
             default -> isSleeping = false;
         }
@@ -232,6 +255,8 @@ public class Player extends Entity implements EntityActions {
             if (monster.isInvincible()) {
                 return;
             }
+
+            gamePanel.sound.playSE(6);
 
             monster.setLife(monster.getLife() - damage);
             monster.setInvincible(true);
@@ -309,6 +334,9 @@ public class Player extends Entity implements EntityActions {
 
         if (isSleeping) {
             g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
+        }
+        if (isInvincible) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.4f));
         }
         g2d.drawImage(image, tempX, tempY, image.getWidth(), image.getHeight(), null);
         g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
