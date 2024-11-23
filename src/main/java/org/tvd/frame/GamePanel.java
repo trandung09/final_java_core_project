@@ -1,6 +1,8 @@
 package org.tvd.frame;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.entity.Entity;
+import org.tvd.entity.Projectile;
+import org.tvd.setter.FrameAsset;
 import org.tvd.entity.monster.MonsterManager;
 import org.tvd.entity.player.Player;
 import org.tvd.environment.EnvironmentManager;
@@ -31,10 +33,10 @@ public class GamePanel extends JPanel implements Runnable {
     public GameStatus gameStatus = GameStatus.GAME_MENU;
 
     // Object settings
-    public final TileManager tileManager = new TileManager(this);
-    public final MonsterManager monsterManager = new MonsterManager(this);
-    public final ItemManager itemManager = new ItemManager(this);
+    public MonsterManager monsterManager = new MonsterManager(this);
+    public ItemManager itemManager = new ItemManager(this);
 
+    public final TileManager tileManager = new TileManager(this);
     public final RenderUI renderUI = new RenderUI(this);
     public final Sound sound = new Sound();
     public final KeyHandler keyHandler = new KeyHandler(this);
@@ -44,10 +46,10 @@ public class GamePanel extends JPanel implements Runnable {
     public final Player player  = new Player(this, keyHandler);
 
     // Game level
-    public static int gameLevel = 0;
-    public static int maxGameLevel = 1;
+    public static int gameLevel;
+    public static int maxGameLevel;
 
-    public static double gamePlayTime = 0;
+    public static double gamePlayTime;
 
     // Thread pool
     public final ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -62,7 +64,22 @@ public class GamePanel extends JPanel implements Runnable {
 
         this.addKeyListener(keyHandler);
 
+        init();
+
         gameThread.start();
+    }
+
+    public void init() {
+
+        sound.play(0);
+
+        gameLevel = 0;
+        maxGameLevel = 2;
+        gamePlayTime = 0;
+
+        renderUI.messages.clear();
+        itemManager = new ItemManager(this);
+        monsterManager = new MonsterManager(this);
     }
 
     @Override
@@ -106,6 +123,7 @@ public class GamePanel extends JPanel implements Runnable {
 
             player.render(g2d);
 
+            monsterManager.renderProjectileOfMonster(g2d);
             monsterManager.renderMonsterCanFly(g2d);
 
             itemManager.render(g2d);
