@@ -3,11 +3,13 @@ package org.tvd.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.tvd.control.CollisionDetection;
+import org.tvd.entity.player.Player;
 import org.tvd.frame.GamePanel;
+import org.tvd.setter.FrameAsset;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -35,6 +37,8 @@ public abstract class Entity {
     protected boolean isSleeping = false;
     protected boolean imageChecker;
     protected boolean attackImageChecker;
+
+    protected ArrayList<Projectile> projectiles = new ArrayList<>();
 
     protected BufferedImage[] defaultImages = new BufferedImage[8];
     protected BufferedImage[] attackImages = new BufferedImage[8];
@@ -94,9 +98,13 @@ public abstract class Entity {
             }
         }
 
-        if (isInvincible && counter.invincibleCounter++ >= 60) {
-            isInvincible = false;
-            counter.invincibleCounter = 0;
+        if (isInvincible) {
+            counter.invincibleCounter++;
+            if (counter.invincibleCounter >= 60) {
+                isInvincible = false;
+                counter.invincibleCounter = 0;
+            }
+          
         }
 
         if (isHpBarOn && counter.hpBarCounter++ >= 500) {
@@ -116,5 +124,78 @@ public abstract class Entity {
 
     public abstract void setAction();
     public abstract void resetAction();
-    public abstract void render(Graphics2D g2d);
+
+    public void render(Graphics2D g2d) {
+
+        int screenX = worldX - gamePanel.player.getWorldX() + gamePanel.player.screenX;
+        int screenY = worldY - gamePanel.player.getWorldY() + gamePanel.player.screenY;
+
+        if (worldX + FrameAsset.TILE_SIZE > gamePanel.player.getWorldX() - gamePanel.player.screenX &&
+                worldX - FrameAsset.TILE_SIZE < gamePanel.player.getWorldX() + gamePanel.player.screenX &&
+                worldY + FrameAsset.TILE_SIZE > gamePanel.player.getWorldY() - gamePanel.player.screenY &&
+                worldY - FrameAsset.TILE_SIZE < gamePanel.player.getWorldY() + gamePanel.player.screenY
+        ) {
+
+            if (image == null) {
+                image = defaultImages[6];
+            }
+
+            switch (direction) {
+
+                case UP -> {
+                    if (!isAttacking)
+                        image = imageChecker ? defaultImages[0] : defaultImages[1];
+                    else {
+                        image = attackImageChecker ? attackImages[0] : attackImages[1];
+                        screenY -= FrameAsset.TILE_SIZE;
+                    }
+                }
+                case DOWN -> {
+                    if (!isAttacking)
+                        image = imageChecker ? defaultImages[2] : defaultImages[3];
+                    else {
+                        image = attackImageChecker ? attackImages[2] : attackImages[3];
+                    }
+                }
+                case LEFT -> {
+                    if (!isAttacking)
+                        image = imageChecker ? defaultImages[4] : defaultImages[5];
+                    else {
+                        image = attackImageChecker ? attackImages[4] : attackImages[5];
+                        screenX -= FrameAsset.TILE_SIZE;
+                    }
+                }
+                case RIGHT -> {
+                    if (!isAttacking)
+                        image = imageChecker ? defaultImages[6] : defaultImages[7];
+                    else {
+                        image = attackImageChecker ? attackImages[6] : attackImages[7];
+                    }
+                }
+            }
+
+            if (isHpBarOn) {
+                renderHpBar(g2d, screenX - 1, screenY - 16);
+            }
+
+            if (isInvincible) {
+                g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.4f));
+            }
+
+            g2d.drawImage(image, screenX, screenY, image.getWidth(), image.getHeight(), null);
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
+        }
+    }
+
+    public void renderHpBar(Graphics2D g2d, int screenX, int screenY) {
+
+        double hpBarScale = (double) FrameAsset.TILE_SIZE / maxLife;
+        double hpBar = hpBarScale * life;
+
+        g2d.setColor(new Color(35, 35, 35));
+        g2d.fillRect(screenX - 1, screenY - 16, FrameAsset.TILE_SIZE  + 2, 12);
+
+        g2d.setColor(new Color(255, 35, 35));
+        g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
+    }
 }
