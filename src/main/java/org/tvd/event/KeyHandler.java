@@ -50,7 +50,10 @@ public class KeyHandler implements KeyListener {
                 pressed.space = true;
                 gamePanel.player.setSleeping(!gamePanel.player.isSleeping());
             }
-            case KeyEvent.VK_ENTER -> gamePanel.player.setAttacking(true);
+            case KeyEvent.VK_ENTER -> {
+                gamePanel.player.setAttacking(true);
+                gamePanel.player.setEnergy(gamePanel.player.getEnergy() - 1);
+            }
             case KeyEvent.VK_L -> pressed.lighting = !pressed.lighting;
             default -> {}
         }
@@ -60,7 +63,6 @@ public class KeyHandler implements KeyListener {
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 gamePanel.gameStatus = GameStatus.GAME_RUNNING;
-                
             }
             default -> {}
         }
@@ -96,6 +98,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.WinStage == Menu.NEW_GAME) {
                     gamePanel.player.init();
+                    gamePanel.sound.stop();
+                    gamePanel.init();
                     gamePanel.gameStatus = GameStatus.GAME_MENU;
                 }
                 else if (StageOption.WinStage == Menu.QUIT) System.exit(0);
