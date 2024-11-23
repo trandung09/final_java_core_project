@@ -11,6 +11,13 @@ public class Sound {
 
     public Sound() {
 
+        soundUrl[0] = getClass().getResource("/sound/background.wav");
+        soundUrl[1] = getClass().getResource("/sound/fanfare.wav");
+        soundUrl[2] = getClass().getResource("/sound/gameover.wav");
+        soundUrl[3] = getClass().getResource("/sound/hitmonster.wav");
+        soundUrl[4] = getClass().getResource("/sound/levelup.wav");
+        soundUrl[5] = getClass().getResource("/sound/powerup.wav");
+        soundUrl[6] = getClass().getResource("/sound/receivedamage.wav");
     }
 
     public void setFile(int index) {
