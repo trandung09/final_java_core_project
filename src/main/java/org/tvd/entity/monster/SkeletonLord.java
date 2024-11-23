@@ -1,7 +1,6 @@
 package org.tvd.entity.monster;
 
-import org.tvd.asset.EntitySetter;
-import org.tvd.entity.Direction;
+import org.tvd.setter.EntitySetter;
 import org.tvd.frame.GamePanel;
 
 import java.awt.Graphics2D;
@@ -16,16 +15,17 @@ public class SkeletonLord extends Monster {
         init();
     }
 
+    @Override
     public void init() {
+
+        super.init();
+
         this.name = "skeletonlord";
-        this.isAlive = true;
         this.maxLife = 70;
         this.life = maxLife;
         this.speed = 1;
-        this.experienceReward = 50;
-        this.abilityAttack = true;
-        this.abilityFly = false;
-        this.direction = Direction.RIGHT;
+        this.damage = 8;
+        this.experienceReward = 25;
         this.solidArea = new Rectangle(8, 8, 90, 90);
         this.solidAreaDefaultX = solidArea.x;
         this.solidAreaDefaultY = solidArea.y;
@@ -36,16 +36,9 @@ public class SkeletonLord extends Monster {
     }
 
     @Override
-    public void setAction() {
-
-        super.setAction();
-
-        super.detectPlayerInSight(400, 100);
-    }
-
-    @Override
     public void update() {
 
+        super.detectPlayerInSight(400, 100);
         super.update();
     }
 
