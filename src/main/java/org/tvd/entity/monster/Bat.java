@@ -21,6 +21,7 @@ public class Bat extends Monster {
         this.maxLife = 5;
         this.life = maxLife;
         this.abilityFly = true;
+        this.abilityAttack = false;
 
         EntitySetter.loadDefaultEntityImage(this);
     }
