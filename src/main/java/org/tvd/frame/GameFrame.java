@@ -1,11 +1,10 @@
 package org.tvd.frame;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.setter.FrameAsset;
 import org.tvd.utility.UtilityTool;
 
 import java.awt.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class GameFrame extends JFrame {
