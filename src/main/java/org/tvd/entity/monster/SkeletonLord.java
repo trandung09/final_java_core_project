@@ -21,7 +21,7 @@ public class SkeletonLord extends Monster {
         super.init();
 
         this.name = "skeletonlord";
-        this.maxLife = 70;
+        this.maxLife = 30;
         this.life = maxLife;
         this.speed = 1;
         this.damage = 8;
