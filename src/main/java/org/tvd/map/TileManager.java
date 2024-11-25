@@ -37,9 +37,13 @@ public class TileManager {
 
         this.gamePanel = gamePanel;
 
-        mapName = Map.maps.get(GamePanel.gameLevel);
-
         loadAllTiles();
+        loadMap();
+    }
+
+    public void loadMap() {
+
+        mapName = Map.maps.get(GamePanel.gameLevel);
         loadMapNum();
     }
 
