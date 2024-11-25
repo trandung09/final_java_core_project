@@ -37,29 +37,31 @@ public class Player extends Entity implements EntityActions {
     // Player attributes
     private int level = 1;
     private int experience = 0;
-    private int nextLevelExp = 10;
+    private int nextLevelExp = 15;
     private int maxEnergy;
     private int energy;
-    private int manas;
+    private int manas = 1;
+    private int key;
+    private int coin;
     private int maxManas;
 
     private boolean isSpeedUp = false;
 
     private Tent tent;
 
+    private int currentSelectedItem = 0;
+
     // Default index of selected weapon in weapon list
     // + index 0: axe
     // + index 1: pick
     // + index 2: sword
-    private int weapon = 1;
+    private int weapon;
 
     private List<WeaponType> weapons = new ArrayList<>();
 
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
 
         super(gamePanel);
-
-        this.init();
 
         this.name = "boy";
 
@@ -68,9 +70,11 @@ public class Player extends Entity implements EntityActions {
 
         this.tent = new Tent(gamePanel);
 
-        this.weapons.add(WeaponType.AXE);
+//        this.weapons.add(WeaponType.AXE);
         this.weapons.add(WeaponType.PICK);
         this.weapons.add(WeaponType.SWORD);
+
+        this.init();
 
         EntitySetter.loadDefaultEntityImage(this);
         EntitySetter.loadAttackEntityImage(this, weapons.get(weapon).name().toLowerCase());
@@ -81,8 +85,9 @@ public class Player extends Entity implements EntityActions {
         this.speed = 5;
         this.maxLife = 50;
         this.life = maxLife;
-        this.damage = 2;
         this.level = 1;
+        this.weapon = 0;
+        this.damage = weapons.get(weapon).getDamage();
         this.nextLevelExp = 10;
         this.experience = 0; 
         this.isAlive = true;
@@ -99,6 +104,10 @@ public class Player extends Entity implements EntityActions {
 
         if (!isAlive) {
             gamePanel.gameStatus = GameStatus.GAME_OVER;
+        }
+
+        if (isSleeping) {
+            energyRecovery();
         }
 
         if (experience >= nextLevelExp) {
@@ -137,7 +146,7 @@ public class Player extends Entity implements EntityActions {
 
         level++;
 
-        nextLevelExp += level * 5;
+        nextLevelExp += level * 20;
 
         gamePanel.sound.playSE(4);
 
@@ -161,6 +170,13 @@ public class Player extends Entity implements EntityActions {
                 isSpeedUp = false;
                 speed -= 2;
                 counter.speedUpCounter = 0;
+            }
+        }
+
+        if (isSleeping) {
+            counter.energyRecoveryCounter++;
+            if (counter.energyRecoveryCounter > 60) {
+                counter.energyRecoveryCounter = 0;
             }
         }
 
@@ -256,6 +272,8 @@ public class Player extends Entity implements EntityActions {
                 return;
             }
 
+            energy -= damage;
+
             gamePanel.sound.playSE(6);
 
             monster.setLife(monster.getLife() - damage);
@@ -263,7 +281,7 @@ public class Player extends Entity implements EntityActions {
             monster.setHpBarOn(true);
             monster.resetAction();
 
-            gamePanel.renderUI.addMessage("1 damage!");
+            gamePanel.renderUI.addMessage(damage + " damage!");
 
             if (monster.getLife() <= 0) {
                 experience += monster.getExperienceReward();
@@ -272,6 +290,52 @@ public class Player extends Entity implements EntityActions {
                 gamePanel.renderUI.addMessage("Experience +" + monster.getExperienceReward() + "!");
             }
         }
+    }
+
+    public void switchWeapon() {
+
+        pressed.back_slash = false;
+
+        weapon++;
+
+        if (weapon == weapons.size()) weapon = 0;
+
+        damage = weapons.get(weapon).getDamage();
+        String weaponName = weapons.get(weapon).name();
+        gamePanel.renderUI.addMessage("Change weapon to " + weaponName);
+        EntitySetter.loadAttackEntityImage(this, weaponName.toLowerCase());
+    }
+
+    public void useCoin() {
+
+        if (coin <= 0) return;
+        coin--;
+    }
+
+    public void useKey() {
+
+        if (key <= 0) return;
+        key--;
+    }
+
+    public void energyRecovery() {
+
+        if (energy >= maxEnergy) return;
+
+        if (counter.energyRecoveryCounter == 58) {
+            energy += 1;
+        }
+    }
+
+    public void healing() {
+
+        if (manas <= 0) return;
+        if (life == maxLife) return;
+
+        life += 5;
+        if (life > maxLife) life = maxLife;
+
+        manas--;
     }
 
     @Override
