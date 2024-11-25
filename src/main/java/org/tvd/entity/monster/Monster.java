@@ -1,6 +1,6 @@
 package org.tvd.entity.monster;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Random;
 
 import org.tvd.entity.Direction;
@@ -96,7 +96,7 @@ public abstract class Monster extends Entity implements EntityActions {
     @Override
     public void resetAction() {
 
-        counter.actionCounter = 0;
+//        counter.actionCounter = 0;
 
         switch (gamePanel.player.getDirection()) {
             case UP -> direction = Direction.DOWN;
@@ -106,11 +106,8 @@ public abstract class Monster extends Entity implements EntityActions {
         }
 
         // Fix monster position when player damages
-        if (!isCollisionOn) {
-           
-        }
 
-         switch (direction) {
+        switch (direction) {
             case DOWN -> worldY -= speed * 15;
             case UP -> worldY += speed * 15;
             case LEFT -> worldX += speed * 15;
@@ -123,7 +120,7 @@ public abstract class Monster extends Entity implements EntityActions {
 
         super.counter();
 
-        if (counter.drawCounter++ >= 10) {
+        if (counter.drawCounter++ >= 10 && life >= 0) {
             imageChecker = !imageChecker;
             counter.drawCounter = 0;
         }
@@ -263,7 +260,7 @@ public abstract class Monster extends Entity implements EntityActions {
         boolean isPlayerInvincible = gamePanel.player.isInvincible();
         int playerLife = gamePanel.player.getLife();
 
-        if (!isPlayerAlive || isPlayerInvincible) {
+        if (!isPlayerAlive || playerLife <= 0 || isPlayerInvincible) {
             return;
         }
 
@@ -288,5 +285,6 @@ public abstract class Monster extends Entity implements EntityActions {
         }
 
         return item;
+
     }
 }
