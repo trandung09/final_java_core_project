@@ -31,7 +31,7 @@ public class MonsterManager extends ArrayList<Entity> {
 
     public void update() {
 
-       removeIf(o ->  o == null || o.getLife() <= 0);
+       removeIf(o ->  o == null || !o.isAlive());
 
        for (Entity monster : this) {
            monster.update();
@@ -78,6 +78,9 @@ public class MonsterManager extends ArrayList<Entity> {
 
     public void renderProjectileOfMonster(Graphics2D g2d) {
         for (Entity entity : this) {
+            if (entity.getLife() < 0) {
+                continue;
+            }
             if (entity.getProjectiles().isEmpty()) {
                 continue;
             }
