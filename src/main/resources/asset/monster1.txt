@@ -1,2 +1,3 @@
-bat 300 300
-orc 700 500
+skeletonlord 1300 1200
+bat 800 800
+orc 1400 1200
