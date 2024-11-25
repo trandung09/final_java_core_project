@@ -36,7 +36,7 @@ public class Slimey extends Monster {
     @Override
     public void update() {
 
-        if (life <= 0 ) {
+        if (life <= 0 && counter.dyingCounter > 40) {
             isAlive = false;
         }
 
