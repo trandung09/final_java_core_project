@@ -3,11 +3,13 @@ package org.tvd.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.tvd.control.CollisionDetection;
-import org.tvd.entity.player.Player;
 import org.tvd.frame.GamePanel;
 import org.tvd.setter.FrameAsset;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -73,6 +75,10 @@ public abstract class Entity {
             return;
         }
 
+        if (life <= 0) {
+            return;
+        }
+
         switch (direction) {
             case UP -> worldY -= speed;
             case DOWN -> worldY += speed;
@@ -83,7 +89,11 @@ public abstract class Entity {
 
     public void counter() {
 
-        if (isAttacking) {
+        if (life <= 0) {
+            counter.dyingCounter++;
+        }
+
+        if (isAttacking && life > 0) {
             counter.attackCounter++;
             if (counter.attackCounter <= 5) {
                 attackImageChecker = true;
@@ -115,7 +125,7 @@ public abstract class Entity {
 
     public void update() {
 
-        if (life <= 0) {
+        if (life <= 0 && counter.dyingCounter > 40) {
             isAlive = false;
         }
 
@@ -147,7 +157,7 @@ public abstract class Entity {
                         image = imageChecker ? defaultImages[0] : defaultImages[1];
                     else {
                         image = attackImageChecker ? attackImages[0] : attackImages[1];
-                        screenY -= FrameAsset.TILE_SIZE;
+                        screenY -= image.getHeight() / 2;
                     }
                 }
                 case DOWN -> {
@@ -162,7 +172,7 @@ public abstract class Entity {
                         image = imageChecker ? defaultImages[4] : defaultImages[5];
                     else {
                         image = attackImageChecker ? attackImages[4] : attackImages[5];
-                        screenX -= FrameAsset.TILE_SIZE;
+                        screenX -= image.getWidth() / 2;
                     }
                 }
                 case RIGHT -> {
@@ -182,6 +192,9 @@ public abstract class Entity {
                 g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.4f));
             }
 
+            if (life <= 0) {
+                dyingAnimation(g2d);
+            }
             g2d.drawImage(image, screenX, screenY, image.getWidth(), image.getHeight(), null);
             g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
         }
@@ -197,5 +210,33 @@ public abstract class Entity {
 
         g2d.setColor(new Color(255, 35, 35));
         g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
+    }
+
+    protected void dyingAnimation(Graphics2D g2d) {
+
+        if (counter.dyingCounter <= 5) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
+        }
+        else if (counter.dyingCounter <= 10) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
+        }
+        else if (counter.dyingCounter <= 15) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
+        }
+        else if (counter.dyingCounter <= 20) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
+        }
+        else if (counter.dyingCounter <= 25) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
+        }
+        else if (counter.dyingCounter <= 30) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
+        }
+        else if (counter.dyingCounter <= 35) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
+        }
+        else if (counter.dyingCounter <= 40) {
+            g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
+        }
     }
 }
