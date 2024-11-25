@@ -1,7 +1,5 @@
 package org.tvd.frame;
 
-import org.tvd.entity.Entity;
-import org.tvd.entity.Projectile;
 import org.tvd.setter.FrameAsset;
 import org.tvd.entity.monster.MonsterManager;
 import org.tvd.entity.player.Player;
@@ -47,8 +45,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Game level
     public static int gameLevel;
-    public static int maxGameLevel;
+    public static int maxGameLevel = 2;
 
+    public static int gameLevelUpCounter = 0;
     public static double gamePlayTime;
 
     // Thread pool
@@ -76,10 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
         gameLevel = 0;
         maxGameLevel = 2;
         gamePlayTime = 0;
-
-        renderUI.messages.clear();
-        itemManager = new ItemManager(this);
-        monsterManager = new MonsterManager(this);
+        gameLevelUpCounter = 0;
     }
 
     @Override
@@ -146,7 +142,11 @@ public class GamePanel extends JPanel implements Runnable {
 
             if (monsterManager.isEmpty()) {
 
-                gameLevelUp();
+                gameLevelUpCounter++;
+
+                if (gameLevelUpCounter >= 250) {
+                    gameLevelUp();
+                }
             }
         }
     }
@@ -160,9 +160,22 @@ public class GamePanel extends JPanel implements Runnable {
             gameStatus = GameStatus.GAME_WIN;
         }
         else {
-            renderUI.currentDialogueMessage = gameLevel == maxGameLevel ? "Game level up" : "Game level down";
+
+            renderUI.currentDialogueMessage = "Game level up";
             gameStatus = GameStatus.GAME_DIALOGUE;
+
+            initForNewGameLevel();
         }
     }
 
+    private void initForNewGameLevel() {
+
+        player.setWorldX(1200);
+        player.setWorldY(1200);
+
+        renderUI.messages.clear();
+        tileManager.loadMap();
+        monsterManager = new MonsterManager(this);
+        itemManager = new ItemManager(this);
+    }
 }
