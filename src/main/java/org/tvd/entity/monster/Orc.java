@@ -3,7 +3,7 @@ package org.tvd.entity.monster;
 import org.tvd.setter.EntitySetter;
 import org.tvd.frame.GamePanel;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 
 public class Orc extends Monster {
 
