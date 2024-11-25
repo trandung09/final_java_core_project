@@ -36,6 +36,7 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerRunningGameStage(int keyCode) {
+
         switch (keyCode) {
             case KeyEvent.VK_W -> pressed.up = true;
             case KeyEvent.VK_S -> pressed.down = true;
@@ -50,25 +51,49 @@ public class KeyHandler implements KeyListener {
                 pressed.space = true;
                 gamePanel.player.setSleeping(!gamePanel.player.isSleeping());
             }
-            case KeyEvent.VK_ENTER -> {
-                gamePanel.player.setAttacking(true);
-                gamePanel.player.setEnergy(gamePanel.player.getEnergy() - 1);
+            case KeyEvent.VK_ENTER -> gamePanel.player.setAttacking(true);
+            case KeyEvent.VK_BACK_SLASH -> {
+                pressed.back_slash = true;
+                gamePanel.player.switchWeapon();
             }
             case KeyEvent.VK_L -> pressed.lighting = !pressed.lighting;
+            case KeyEvent.VK_QUOTE -> gamePanel.gameStatus = GameStatus.CHARACTER_ST;
             default -> {}
         }
     }
 
     private void keyHandlerCharacterGameStage(int keyCode) {
+
+        int playerCurrentSelectedItem = gamePanel.player.getCurrentSelectedItem();
+
         switch (keyCode) {
+            case KeyEvent.VK_QUOTE -> gamePanel.gameStatus = GameStatus.GAME_RUNNING;
             case KeyEvent.VK_ENTER -> {
+
+                switch (playerCurrentSelectedItem) {
+                    case 0 -> gamePanel.player.useKey();
+                    case 1 -> gamePanel.player.useCoin();
+                    case 2 -> gamePanel.player.healing();
+                }
+
                 gamePanel.gameStatus = GameStatus.GAME_RUNNING;
+            }
+            case KeyEvent.VK_UP -> {
+                playerCurrentSelectedItem--;
+                if (playerCurrentSelectedItem < 0) playerCurrentSelectedItem = 2;
+                gamePanel.player.setCurrentSelectedItem(playerCurrentSelectedItem);
+            }
+            case KeyEvent.VK_DOWN -> {
+                playerCurrentSelectedItem++;
+                if (playerCurrentSelectedItem > 2) playerCurrentSelectedItem = 0;
+                gamePanel.player.setCurrentSelectedItem(playerCurrentSelectedItem);
             }
             default -> {}
         }
     }
 
     private void keyHandlerDialogueStage(int keyCode) {
+
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 gamePanel.gameStatus = GameStatus.GAME_RUNNING;
@@ -78,6 +103,7 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerOverGameStage(int keyCode) {
+
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.OverStage == Menu.RETRY) {
@@ -94,6 +120,7 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerWinGameStage(int keyCode) {
+
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.WinStage == Menu.NEW_GAME) {
@@ -113,6 +140,7 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerMenuGameStage(int keyCode) {
+
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.MenuStage == Menu.QUIT) System.exit(0);
@@ -132,6 +160,7 @@ public class KeyHandler implements KeyListener {
     }
 
     private void keyHandlerPauseGameStage(int keyCode) {
+
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.PauseStage == Menu.CONTINUE) gamePanel.gameStatus = GameStatus.GAME_RUNNING;
