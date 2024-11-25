@@ -10,6 +10,7 @@ public class KeyPressed {
     public boolean enter;
     public boolean pause;
     public boolean lighting = true;
+    public boolean back_slash;
 
     public boolean isMovePressed() {
 
