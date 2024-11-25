@@ -11,10 +11,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-import org.tvd.asset.FrameAsset;
+import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.frame.Menu;
 import org.tvd.frame.StageOption;
+import org.tvd.utility.StaticImage;
 import org.tvd.utility.UtilityTool;
 
 public class RenderUI {
@@ -71,6 +72,12 @@ public class RenderUI {
         }
     }
 
+    public void addMessage(String message) {
+
+        messages.add(message);
+        messageCounter.add(0);
+    }
+
     /**
      * Draw all messages on screen
      */
@@ -100,7 +107,7 @@ public class RenderUI {
 
             messageCounter.set(i, currentMessageCounter + 1);
 
-            boolean maxMessageCountCheck = message.equalsIgnoreCase("1 damage!") || message.contains("Switch weapon");
+            boolean maxMessageCountCheck = message.contains("damage!") || message.contains("change weapon");
             int maxMessageCount = maxMessageCountCheck ? 60 : 150;
 
             // Handler concurrent modification exception when remove
@@ -115,12 +122,6 @@ public class RenderUI {
                 }
             }
         }
-    }
-
-    public void addMessage(String message) {
-
-        messages.add(message);
-        messageCounter.add(0);
     }
 
     private void renderGameWinScreen() {
@@ -248,10 +249,10 @@ public class RenderUI {
         int screenX = getCenterPositionForText(text);
         int screenY = FrameAsset.TILE_SIZE * 2;
 
-         g2d.setColor(Color.WHITE);
-            g2d.drawString(text, screenX - 2, screenY - 2);
-            g2d.setColor(Color.GRAY);
-            g2d.drawString(text, screenX, screenY);
+        g2d.setColor(Color.GRAY);
+        g2d.drawString(text, screenX - 2, screenY - 2);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(text, screenX, screenY);
 
         g2d.setColor(Color.WHITE);
 
@@ -375,6 +376,114 @@ public class RenderUI {
 
     private void renderPlayerStageScreen() {
 
+        int frameX = (FrameAsset.TILE_SIZE * 3) / 4;
+        int frameY = FrameAsset.TILE_SIZE;
+        int height = FrameAsset.TILE_SIZE * 8;
+        int width = FrameAsset.TILE_SIZE * 5;
+
+        renderSubWindowScreen(frameX, frameY, width, height);
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 32f));
+
+        int textX = frameX + 20;
+        int textY = frameY + FrameAsset.TILE_SIZE;
+        int lineHeight = 40;
+
+        g2d.drawString("Level", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Life", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Energy", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Damage", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Exp", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Next Level", textX, textY);
+        textY += lineHeight;
+        g2d.drawString("Weapon", textX, textY);
+
+        int valueX = frameX + width - 30;
+        textY = frameY + FrameAsset.TILE_SIZE;
+
+        String value = "";
+
+        value = String.valueOf(gamePanel.player.getLevel());
+        textX = getXForAlignToRightText(value, valueX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = gamePanel.player.getLife() + "/" + gamePanel.player.getMaxLife();
+        textX = getXForAlignToRightText(value, valueX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = gamePanel.player.getEnergy() + "/" + gamePanel.player.getMaxEnergy();
+        textX = getXForAlignToRightText(value, valueX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(gamePanel.player.getDamage());
+        textX = getXForAlignToRightText(value, valueX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(gamePanel.player.getExperience());
+        textX = getXForAlignToRightText(value, valueX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        value = String.valueOf(gamePanel.player.getNextLevelExp());
+        textX = getXForAlignToRightText(value, valueX);
+        g2d.drawString(value, textX, textY);
+        textY += lineHeight - 25;
+
+        int currentWeapon = gamePanel.player.getWeapon();
+        BufferedImage weaponImage = null;
+        switch (currentWeapon) {
+            case 0 -> weaponImage = StaticImage.AXE;
+            case 1 -> weaponImage = StaticImage.PICK;
+            case 2 -> weaponImage = StaticImage.SWORD;
+        }
+        assert weaponImage != null;
+        g2d.drawImage(weaponImage, valueX - 29, textY, weaponImage.getWidth(), weaponImage.getHeight(), null);
+
+        lineHeight += 10;
+
+        int usedItemX = FrameAsset.SCREEN_WIDTH - frameX - width;
+        int usedItemY = frameY;
+
+        renderSubWindowScreen(usedItemX, usedItemY, width - 80, height / 2 + 30);
+        renderSubWindowScreen(usedItemX, usedItemY + height / 2 + 42, width, height / 4 - 12);
+
+        g2d.drawString("[ENTER] to use!", usedItemX + 20, usedItemY + height / 2 + 90);
+
+        usedItemX += 25;
+        usedItemY += 25;
+
+        int playerCurrSelectedItem = gamePanel.player.getCurrentSelectedItem();
+
+        if (playerCurrSelectedItem == 0) {
+            renderSubWindowScreen(usedItemX - 15, usedItemY - 15, width - 101, 70);
+        }
+
+        g2d.drawImage(StaticImage.KEY, usedItemX + 5, usedItemY, 40, 40, null);
+        g2d.drawString("x" + gamePanel.player.getKey(), usedItemX + 65, usedItemY + 32);
+        usedItemY += lineHeight + 15;
+
+        if (playerCurrSelectedItem == 1) {
+            renderSubWindowScreen(usedItemX - 15, usedItemY - 15, width - 101, 70);
+        }
+        g2d.drawImage(StaticImage.COIN, usedItemX + 5, usedItemY, 40, 40, null);
+        g2d.drawString("x" + gamePanel.player.getCoin(), usedItemX + 65, usedItemY + 32);
+        usedItemY += lineHeight + 15;
+
+        if (playerCurrSelectedItem == 2) {
+            renderSubWindowScreen(usedItemX - 15, usedItemY - 15, width - 101, 70);
+        }
+        g2d.drawImage(StaticImage.MANA, usedItemX + 5, usedItemY, 40, 40, null);
+        g2d.drawString("x" + gamePanel.player.getManas(), usedItemX + 66, usedItemY + 32);
     }
 
     /**
@@ -404,5 +513,11 @@ public class RenderUI {
 
         int length = (int) (g2d.getFontMetrics().getStringBounds(text, g2d).getWidth() / 2);
         return FrameAsset.SCREEN_WIDTH / 2 - length;
+    }
+
+    private int getXForAlignToRightText(String text, int tailX ) {
+
+        int length = (int) g2d.getFontMetrics().getStringBounds(text, g2d).getWidth();
+        return tailX - length;
     }
 }
