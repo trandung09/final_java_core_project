@@ -10,4 +10,5 @@ public class Counter {
     public int speedUpCounter = 0;
     public int shootCounter = 0;
     public int dyingCounter = 0;
+    public int energyRecoveryCounter = 0;
 }
