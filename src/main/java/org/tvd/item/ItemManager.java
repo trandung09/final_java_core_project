@@ -8,7 +8,6 @@ import org.tvd.frame.GamePanel;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Objects;
 
 @Setter
 @Getter
