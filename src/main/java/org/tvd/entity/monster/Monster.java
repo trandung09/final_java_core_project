@@ -264,18 +264,20 @@ public abstract class Monster extends Entity implements EntityActions {
             return;
         }
 
+        gamePanel.sound.playSE(6);
         gamePanel.player.setLife(playerLife - damage);
         gamePanel.player.setInvincible(true);
     }
 
-    protected SuperItem dying() {
+    protected SuperItem dying(String monsterName) {
 
         ItemFactory itemFactory = ItemFactory.getInstance();
         SuperItem item = null;
 
-        switch (name) {
-            case "orc" -> item = itemFactory.getItem("diamond", gamePanel);
-            case "slimey" -> item = itemFactory.getItem("slimey", gamePanel);
+        switch (monsterName) {
+            case "slimey" -> item = itemFactory.getItem("coin", gamePanel);
+            case "orc" -> item = itemFactory.getItem("mana", gamePanel);
+            case "skeletonlord" -> item = itemFactory.getItem("key", gamePanel);
         }
 
         if (item != null) {
@@ -285,6 +287,5 @@ public abstract class Monster extends Entity implements EntityActions {
         }
 
         return item;
-
     }
 }
