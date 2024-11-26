@@ -11,11 +11,13 @@ import java.io.InputStream;
 import java.rmi.server.Skeleton;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.Locale;
 
 import org.tvd.entity.Entity;
 import org.tvd.entity.monster.Bat;
 import org.tvd.entity.monster.Monster;
 import org.tvd.entity.monster.SkeletonLord;
+import org.tvd.entity.player.weapon.WeaponType;
 import org.tvd.item.Stair;
 import org.tvd.item.SuperItem;
 import org.tvd.setter.FrameAsset;
@@ -558,9 +560,7 @@ public class RenderUI {
         int usedItemY = frameY;
 
         renderSubWindowScreen(usedItemX, usedItemY, width - 80, height / 2 + 30);
-        renderSubWindowScreen(usedItemX, usedItemY + height / 2 + 42, width, height / 4 - 12);
-
-        g2d.drawString("[ENTER] to use!", usedItemX + 20, usedItemY + height / 2 + 90);
+        renderSubWindowScreen(usedItemX, usedItemY + height / 2 + 42, width - 80, height / 4 - 12);
 
         usedItemX += 25;
         usedItemY += 25;
@@ -587,6 +587,18 @@ public class RenderUI {
         }
         g2d.drawImage(StaticImage.MANA, usedItemX + 5, usedItemY, 40, 40, null);
         g2d.drawString("x" + gamePanel.player.getManas(), usedItemX + 66, usedItemY + 32);
+
+        usedItemX  = FrameAsset.SCREEN_WIDTH - frameX - width + FrameAsset.TILE_SIZE / 8;
+        BufferedImage image = null;
+        for (WeaponType type : gamePanel.player.getWeapons()) {
+            switch (type.name().toLowerCase()) {
+                case "axe" -> image = StaticImage.AXE;
+                case "pick" -> image = StaticImage.PICK;
+                case "sword" -> image = StaticImage.SWORD;
+            }
+            g2d.drawImage(image, usedItemX, usedItemY + height / 4, 45, 45, null);
+            usedItemX += 48;
+        }
     }
 
     /**
