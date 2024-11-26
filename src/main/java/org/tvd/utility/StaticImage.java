@@ -14,5 +14,5 @@ public class StaticImage {
 
     public static final BufferedImage SWORD = uTool.getImage(rootPath + "sword", 38, 38);
     public static final BufferedImage PICK  = uTool.getImage(rootPath + "pick", 38, 38);
-    public static final BufferedImage AXE   = uTool.getImage(rootPath + "sword", 38, 38);
+    public static final BufferedImage AXE   = uTool.getImage(rootPath + "axe", 38, 38);
 }
