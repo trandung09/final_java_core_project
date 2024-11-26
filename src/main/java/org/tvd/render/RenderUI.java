@@ -8,9 +8,16 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.server.Skeleton;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import org.tvd.entity.Entity;
+import org.tvd.entity.monster.Bat;
+import org.tvd.entity.monster.Monster;
+import org.tvd.entity.monster.SkeletonLord;
+import org.tvd.item.Stair;
+import org.tvd.item.SuperItem;
 import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.frame.Menu;
@@ -61,10 +68,19 @@ public class RenderUI {
         switch (gamePanel.gameStatus) {
             case GAME_MENU -> renderGameMenuScreen();
             case GAME_RUNNING -> {
+                if (gamePanel.keyHandler.pressed.mini_map) {
+                    renderMiniMapScreen(538, 72,200, 200);
+                }
                 renderGameRunningScreen();
                 renderPlayerInfoScreen();
             }
-            case GAME_PAUSE -> renderGamePauseScreen();
+            case GAME_PAUSE -> {
+                if (GamePanel.gameLevel > GamePanel.maxGameLevel) {
+                    renderGameWinScreen();
+                }else {
+                    renderGamePauseScreen();
+                }
+            }
             case GAME_OVER -> renderGameOverScreen();
             case GAME_WIN -> renderGameWinScreen();
             case CHARACTER_ST -> renderPlayerStageScreen();
@@ -124,12 +140,99 @@ public class RenderUI {
         }
     }
 
+    public void renderMiniMapScreen(int x, int y, int width, int height) {
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 20f));
+        g2d.drawString("Level: " + (GamePanel.gameLevel + 1), x + FrameAsset.TILE_SIZE * 5 / 2, y + FrameAsset.TILE_SIZE);
+        if (gamePanel.keyHandler.pressed.lighting) {
+            g2d.setColor(new Color(0, 0, 0, 170));
+        }
+        else {
+            g2d.setColor(new Color(0, 0, 0, 120));
+        }
+        g2d.fillRect(x, y, width, height);
+
+        int scaleX = FrameAsset.TILE_SIZE * FrameAsset.MAX_WORLD_COL / width;
+        int scaleY = FrameAsset.TILE_SIZE * FrameAsset.MAX_WORLD_COL / height;
+        int worldX, worldY;
+
+        // All wall
+        int scaleW = FrameAsset.TILE_SIZE / scaleX;
+        int scaleH = FrameAsset.TILE_SIZE / scaleY;
+        int[][] mapNum = gamePanel.tileManager.getMaps();
+
+        if (gamePanel.keyHandler.pressed.lighting) {
+            g2d.setColor(new Color(255, 255, 255, 25));
+        }
+        else {
+            g2d.setColor(new Color(0, 0, 0, 60));
+        }
+
+        for (int i = 0; i < FrameAsset.MAX_WORLD_COL; i++) {
+            for (int j = 0; j < FrameAsset.MAX_WORLD_ROW; j++) {
+                if (mapNum[j][i] == 32) {
+                    g2d.fillRect(x + i * scaleW, y + j * scaleH, scaleW, scaleH);
+                }
+            }
+        }
+
+        // All item
+        g2d.setColor(new Color(95, 201, 137));
+        for (SuperItem item : gamePanel.itemManager) {
+
+            if (item == null) continue;
+
+            worldX = item.getWorldX() / scaleX;
+            worldY = item.getWorldY() / scaleY;
+
+            if (item instanceof Stair) {
+                g2d.setColor(new Color(16, 107, 52));
+                g2d.fillOval(x + worldX, y + worldY, 8, 8);
+            }
+            else {
+                g2d.setColor(new Color(95, 201, 137));
+                g2d.fillOval(x + worldX, y + worldY, 7, 7);
+            }
+        }
+
+        // All monster
+        g2d.setColor(new Color(171, 8, 8));
+        for (Entity entity : gamePanel.monsterManager) {
+
+            if (entity == null) continue;
+
+            worldX = entity.getWorldX() / scaleX;
+            worldY = entity.getWorldY() / scaleY;
+
+            if (entity instanceof Bat) {
+                g2d.setColor(new Color(239, 193, 87, 120));
+                g2d.fillRect(x + worldX, y + worldY, 5, 5);
+                continue;
+            }
+            g2d.setColor(new Color(171, 8, 8));
+            if (entity instanceof SkeletonLord) {
+                g2d.fillRect(x + worldX, y + worldY, 10, 10);
+            }
+            else {
+                g2d.fillRect(x + worldX, y + worldY, 8, 8);
+            }
+        }
+
+        // Player
+        g2d.setColor(new Color(23, 118, 196));
+        worldX = gamePanel.player.getWorldX() / scaleX;
+        worldY = gamePanel.player.getWorldY() / scaleY;
+
+        g2d.fillRect(x + worldX, y + worldY, 8, 8);
+    }
+
     private void renderGameWinScreen() {
 
         g2d.setColor(Color.WHITE);
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 65f));
 
-        String text = "Congratulations";
+        String text = "Welcome Home: Our Hero";
 
         int screenX = getCenterPositionForText(text);
         int screenY = FrameAsset.TILE_SIZE * 2 + FrameAsset.TILE_SIZE / 2;
@@ -138,7 +241,7 @@ public class RenderUI {
 
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 50f));
 
-        text = "on winning";
+        text = "";
         screenX = getCenterPositionForText(text);
         screenY = screenY + FrameAsset.TILE_SIZE;
         g2d.drawString(text, screenX, screenY);
@@ -369,7 +472,7 @@ public class RenderUI {
         g2d.setFont(g2d.getFont().deriveFont(Font.BOLD, 30f));
         g2d.setColor(Color.WHITE);
         String text = convertGamePlayTimeToString();
-        screenX = FrameAsset.SCREEN_WIDTH - FrameAsset.TILE_SIZE * 3;
+        screenX = FrameAsset.SCREEN_WIDTH - FrameAsset.TILE_SIZE * 3 + FrameAsset.TILE_SIZE / 6;
         screenY = FrameAsset.TILE_SIZE;
         g2d.drawString(text, screenX, screenY);
     }
