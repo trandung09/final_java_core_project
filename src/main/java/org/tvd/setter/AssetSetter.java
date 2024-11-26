@@ -1,5 +1,6 @@
 package org.tvd.setter;
 
+import org.tvd.entity.Entity;
 import org.tvd.entity.monster.Monster;
 import org.tvd.entity.monster.MonsterFactory;
 import org.tvd.entity.monster.MonsterManager;
@@ -25,9 +26,7 @@ public class AssetSetter {
 
     public static void loadAllItem(GamePanel gamePanel, ItemManager itemManager) {
 
-        int level = GamePanel.gameLevel;
-
-        String itemInitFilePath = resourcePath + "item" + level + ".txt";
+        String itemInitFilePath = resourcePath + "item" + GamePanel.gameLevel + ".txt";
         try {
 
             br = Files.newBufferedReader(Path.of(itemInitFilePath), StandardCharsets.UTF_8);
@@ -56,15 +55,13 @@ public class AssetSetter {
             br.close();
 
         } catch (IOException e) {
-            System.err.println("AssetSetter: error reading file.");
+            System.err.println("AssetSetter: (item) _ error reading file.");
         }
     }
 
     public static void loadAllMonster(GamePanel gamePanel, MonsterManager monsterManager) {
 
-        int level = GamePanel.gameLevel;
-
-        String monsterInitFilePath = resourcePath + "monster" + level + ".txt";
+        String monsterInitFilePath = resourcePath + "monster" + GamePanel.gameLevel + ".txt";
         try {
 
             br = Files.newBufferedReader(Path.of(monsterInitFilePath), StandardCharsets.UTF_8);
@@ -98,6 +95,31 @@ public class AssetSetter {
 
         } catch (IOException e) {
             System.err.println("AssetSetter: (monster) _ error reading file.");
+        }
+    }
+
+    public static void resetPositionOfEntityOnGameLevel(Entity entity) {
+
+        String entityResetPositionFilePath = resourcePath + "player" + GamePanel.gameLevel + ".txt";
+        try {
+
+            br = Files.newBufferedReader(Path.of(entityResetPositionFilePath), StandardCharsets.UTF_8);
+
+            String content = br.readLine();
+
+            if (content == null) {
+                return;
+            }
+
+            String[] param = content.split(" ");
+            int worldX = Integer.parseInt(param[0]);
+            int worldY = Integer.parseInt(param[1]);
+
+            entity.setWorldX(worldX);
+            entity.setWorldY(worldY);
+
+        } catch (IOException e) {
+            System.err.println("AssetSetter: (entity) _ error reading file.");
         }
     }
 }
