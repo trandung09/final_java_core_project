@@ -26,8 +26,9 @@ public class Slimey extends Monster {
 
         this.name = "slimey";
         this.speed = 1;
+        this.damage = 5;
         this.experienceReward = 8;
-        this.maxLife = 10;
+        this.maxLife = 17;
         this.life = maxLife;
 
         EntitySetter.loadDefaultEntityImage(this);
@@ -68,10 +69,11 @@ public class Slimey extends Monster {
 
        for (Projectile projectile : projectiles) {
            projectile.setCollisionOn(false);
-           detection.checkCollisionWithOtherEntity(this, gamePanel.player);
+           detection.checkCollisionWithOtherEntity(projectile, gamePanel.player);
 
            if (projectile.isCollisionOn()) {
                damagePlayer();
+               projectile.setCollisionOn(false);
            }
        }
     }
