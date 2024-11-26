@@ -26,7 +26,14 @@ public class KeyHandler implements KeyListener {
         switch (gamePanel.gameStatus) {
             case GAME_MENU -> keyHandlerMenuGameStage(keyCode);
             case GAME_RUNNING -> keyHandlerRunningGameStage(keyCode);
-            case GAME_PAUSE -> keyHandlerPauseGameStage(keyCode);
+            case GAME_PAUSE -> {
+                if (GamePanel.gameLevel > GamePanel.maxGameLevel) {
+                    keyHandlerWinGameStage(keyCode);
+                }
+                else {
+                    keyHandlerPauseGameStage(keyCode);
+                }
+            }
             case GAME_WIN -> keyHandlerWinGameStage(keyCode);
             case GAME_OVER -> keyHandlerOverGameStage(keyCode);
             case GAME_DIALOGUE -> keyHandlerDialogueStage(keyCode);
@@ -38,6 +45,7 @@ public class KeyHandler implements KeyListener {
     private void keyHandlerRunningGameStage(int keyCode) {
 
         switch (keyCode) {
+            case KeyEvent.VK_SHIFT -> pressed.mini_map = !pressed.mini_map;
             case KeyEvent.VK_W -> pressed.up = true;
             case KeyEvent.VK_S -> pressed.down = true;
             case KeyEvent.VK_A -> pressed.left = true;
@@ -95,9 +103,7 @@ public class KeyHandler implements KeyListener {
     private void keyHandlerDialogueStage(int keyCode) {
 
         switch (keyCode) {
-            case KeyEvent.VK_ENTER -> {
-                gamePanel.gameStatus = GameStatus.GAME_RUNNING;
-            }
+            case KeyEvent.VK_ENTER -> gamePanel.gameStatus = GameStatus.GAME_RUNNING;
             default -> {}
         }
     }
@@ -107,7 +113,9 @@ public class KeyHandler implements KeyListener {
         switch (keyCode) {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.OverStage == Menu.RETRY) {
+                    gamePanel.sound.stop();
                     gamePanel.player.init();
+                    gamePanel.init();
                     gamePanel.gameStatus = GameStatus.GAME_MENU;
                 }
                 else if (StageOption.OverStage == Menu.QUIT) System.exit(0);
@@ -125,6 +133,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ENTER -> {
                 if (StageOption.WinStage == Menu.NEW_GAME) {
                     gamePanel.player.init();
+                    gamePanel.player.getPressed().lighting = true;
                     gamePanel.sound.stop();
                     gamePanel.init();
                     gamePanel.gameStatus = GameStatus.GAME_MENU;
@@ -166,6 +175,9 @@ public class KeyHandler implements KeyListener {
                 if (StageOption.PauseStage == Menu.CONTINUE) gamePanel.gameStatus = GameStatus.GAME_RUNNING;
                 else if (StageOption.PauseStage == Menu.QUIT) {
                     StageOption.PauseStage = Menu.CONTINUE;
+                    gamePanel.sound.stop();
+                    gamePanel.init();
+                    gamePanel.player.init();
                     gamePanel.gameStatus = GameStatus.GAME_MENU;
                 }
             }
