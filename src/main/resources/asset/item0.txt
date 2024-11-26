@@ -1,1 +1,4 @@
 boots 500 500
+stair 2112 2112
+pick 600 600
+sword 700 700
