@@ -87,7 +87,8 @@ public class Player extends Entity implements EntityActions {
         this.maxLife = 70;
         this.life = maxLife;
         this.level = 1;
-        this.key = 1;
+        this.key = 0;
+        this.manas = 2;
         this.weapons.add(WeaponType.AXE);
         this.weapon = 0;
         this.isUsedKey = false;
@@ -95,7 +96,7 @@ public class Player extends Entity implements EntityActions {
         this.nextLevelExp = 10;
         this.experience = 0; 
         this.isAlive = true;
-        this.maxEnergy = 100;
+        this.maxEnergy = 120;
         this.energy = maxEnergy;
     }
 
@@ -158,10 +159,6 @@ public class Player extends Entity implements EntityActions {
         nextLevelExp += level * 20;
 
         gamePanel.sound.playSE(4);
-
-        // if (damage < 4) {
-            // damage++;
-        // }
 
         energy = maxEnergy;
 
@@ -284,6 +281,7 @@ public class Player extends Entity implements EntityActions {
                     gamePanel.renderUI.addMessage("You have pick up the Pick!");
                 }
             }
+            case "lantern" -> gamePanel.sound.playSE(9);
             case "boots" -> {
                 isSpeedUp = true;
                 speed += 2;
@@ -322,7 +320,7 @@ public class Player extends Entity implements EntityActions {
                 return;
             }
 
-            energy -= damage;
+            energy -= damage / 2;
 
             gamePanel.sound.playSE(6);
 
@@ -375,7 +373,7 @@ public class Player extends Entity implements EntityActions {
 
         if (energy >= maxEnergy) return;
 
-        if (counter.energyRecoveryCounter == 45) {
+        if (counter.energyRecoveryCounter == 30) {
             energy += 2;
         }
     }
