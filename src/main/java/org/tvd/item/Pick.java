@@ -1,15 +1,15 @@
 package org.tvd.item;
 
-import org.tvd.setter.ItemSetter;
 import org.tvd.frame.GamePanel;
+import org.tvd.setter.ItemSetter;
 
-public class Key extends SuperItem {
-
-    public Key(GamePanel gamePanel) {
+public class Pick extends SuperItem
+{
+    public Pick(GamePanel gamePanel) {
 
         super(gamePanel);
 
-        this.name = "key";
+        this.name = "pick";
 
         ItemSetter.loadDefaultItemImage(this);
     }

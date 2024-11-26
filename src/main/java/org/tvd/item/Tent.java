@@ -1,10 +1,8 @@
 package org.tvd.item;
 
-import org.tvd.setter.FrameAsset;
 import org.tvd.setter.ItemSetter;
 import org.tvd.frame.GamePanel;
 
-import java.awt.Rectangle;
 
 public class Tent extends SuperItem {
 
@@ -13,10 +11,6 @@ public class Tent extends SuperItem {
         super(gamePanel);
 
         this.name = "tent";
-        this.imageSize = FrameAsset.TILE_SIZE * 2;
-        this.solidArea = new Rectangle(0, 0, imageSize, imageSize);
-        this.solidAreaDefaultX = solidArea.x;
-        this.solidAreaDefaultY = solidArea.y;
 
         ItemSetter.loadDefaultItemImage(this);
     }

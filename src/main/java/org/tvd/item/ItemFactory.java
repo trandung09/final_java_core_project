@@ -16,10 +16,13 @@ public class ItemFactory {
         return switch (name.toLowerCase()) {
             case "boots" -> new Boots(gamePanel);
             case "coin" -> new Coin(gamePanel);
-            case "diamond" -> new Diamond(gamePanel);
+            case "mana" -> new Mana(gamePanel);
+            case "stair" -> new Stair(gamePanel);
             case "key" -> new Key(gamePanel);
             case "lantern" -> new Lantern(gamePanel);
             case "tent" -> new Tent(gamePanel);
+            case "pick" -> new Pick(gamePanel);
+            case "sword" -> new Sword(gamePanel);
             default -> null;
         };
     }
