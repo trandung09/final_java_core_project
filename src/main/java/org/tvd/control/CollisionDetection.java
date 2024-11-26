@@ -188,7 +188,7 @@ public class CollisionDetection {
 
     private boolean isInCollisionArea(Entity entity, SuperItem item) {
 
-        double detectionRadius = FrameAsset.TILE_SIZE * 3;
+        double detectionRadius = FrameAsset.TILE_SIZE * 10;
 
         double width = Math.abs(entity.getWorldX() - item.getWorldX());
         double height = Math.abs(entity.getWorldY() - item.getWorldY());
