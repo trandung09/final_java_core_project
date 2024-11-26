@@ -3,7 +3,6 @@ package org.tvd.map;
 import lombok.Data;
 import lombok.Getter;
 
-import org.tvd.entity.player.Player;
 import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
 import org.tvd.utility.UtilityTool;
@@ -77,7 +76,7 @@ public class TileManager {
         setUpForTile(25, "025", true);
         setUpForTile(26, "026", true);
         setUpForTile(27, "027", true);
-        setUpForTile(27, "028", true);
+        setUpForTile(28, "028", true);
         setUpForTile(29, "029", true);
         setUpForTile(30, "030", true);
         setUpForTile(31, "031", true);
@@ -166,9 +165,10 @@ public class TileManager {
         public static final List<String> maps = new ArrayList<>();
 
         static {
-            maps.add("dungeon00.txt");
-            maps.add("dungeon01.txt");
-            maps.add("dungeon02.txt");
+            maps.add("dungeon0.txt");
+            maps.add("dungeon1.txt");
+            maps.add("dungeon2.txt");
+            maps.add("dungeon4.txt");
         }
     }
 }
