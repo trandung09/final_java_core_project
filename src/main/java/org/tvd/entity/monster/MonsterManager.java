@@ -31,6 +31,13 @@ public class MonsterManager extends ArrayList<Entity> {
 
     public void update() {
 
+       for (Entity entity : this) {
+           if (entity.isAlive()) continue;
+
+           if (entity instanceof Monster monster) {
+               gamePanel.itemManager.add(monster.dying(monster.getName()));
+           }
+       }
        removeIf(o ->  o == null || !o.isAlive());
 
        for (Entity monster : this) {
