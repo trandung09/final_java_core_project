@@ -172,10 +172,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
         else {
             sound.stop();
+            player.setLife(player.getMaxLife());
             player.getPressed().lighting = false;
             renderUI.currentDialogueMessage =
                     "Congratulations! You have overcome all \nchallenges and defeated every enemy.\nNow, you will return to their beloved island.\nPeace and glory await you!";
         }
+
+        player.setEnergy(player.getMaxEnergy());
 
         gameStatus = GameStatus.GAME_DIALOGUE;
 
