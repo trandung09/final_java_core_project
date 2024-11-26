@@ -39,8 +39,8 @@ public class AssetSetter {
                 String[] param = content.split(" ");
 
                 String itemName = param[0];
-                int ipX = Integer.parseInt(param[1]);
-                int ipY = Integer.parseInt(param[2]);
+                int ipX = Integer.parseInt(param[1]) * FrameAsset.TILE_SIZE;
+                int ipY = Integer.parseInt(param[2]) * FrameAsset.TILE_SIZE;
 
                 SuperItem item = itemFactory.getItem(itemName, gamePanel);
 
@@ -74,8 +74,8 @@ public class AssetSetter {
                 String[] param = content.split(" ");
 
                 String monsterName = param[0];
-                int mpX = Integer.parseInt(param[1]);
-                int mpY = Integer.parseInt(param[2]);
+                int mpX = Integer.parseInt(param[1]) * FrameAsset.TILE_SIZE;
+                int mpY = Integer.parseInt(param[2]) * FrameAsset.TILE_SIZE;
 
                 Monster monster = monsterFactory.getMonster(monsterName, gamePanel);
 
