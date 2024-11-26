@@ -1,1 +1,4 @@
-stair 2112 2112
+stair 44 44
+boots 25 6
+boots 29 30
+lantern 5 28

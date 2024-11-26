@@ -1,0 +1,14 @@
+bat 16 32
+bat 22 22
+bat 28 38
+bat 25 25
+skeletonlord 25 39
+skeletonlord 43 30
+orc 34 7
+orc 43 9
+orc 11 43
+orc 13 17
+slimey 35 42
+slimey 42 41
+slimey 33 30
+slimey 31 30

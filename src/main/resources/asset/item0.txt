@@ -1,4 +1,4 @@
-boots 500 500
-stair 2112 2112
-pick 600 600
-sword 700 700
+boots 14 20
+boots 40 23
+stair 44 44
+pick 27 31
