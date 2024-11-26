@@ -1,5 +1,6 @@
 package org.tvd.frame;
 
+import org.tvd.setter.AssetSetter;
 import org.tvd.setter.FrameAsset;
 import org.tvd.entity.monster.MonsterManager;
 import org.tvd.entity.player.Player;
@@ -31,11 +32,11 @@ public class GamePanel extends JPanel implements Runnable {
     public GameStatus gameStatus = GameStatus.GAME_MENU;
 
     // Object settings
-    public MonsterManager monsterManager = new MonsterManager(this);
-    public ItemManager itemManager = new ItemManager(this);
+    public MonsterManager monsterManager;
+    public ItemManager itemManager;
+    public RenderUI renderUI;
 
     public final TileManager tileManager = new TileManager(this);
-    public final RenderUI renderUI = new RenderUI(this);
     public final Sound sound = new Sound();
     public final KeyHandler keyHandler = new KeyHandler(this);
 
@@ -46,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable {
     // Game level
     public static int gameLevel;
     public static int maxGameLevel = 2;
+
+    public static boolean isLevelComplete = false;
 
     public static int gameLevelUpCounter = 0;
     public static double gamePlayTime;
@@ -76,6 +79,12 @@ public class GamePanel extends JPanel implements Runnable {
         maxGameLevel = 2;
         gamePlayTime = 0;
         gameLevelUpCounter = 0;
+
+        tileManager.loadMap();
+        itemManager = new ItemManager(this);
+        monsterManager = new MonsterManager(this);
+        renderUI = new RenderUI(this);
+        AssetSetter.resetPositionOfEntityOnGameLevel(player);
     }
 
     @Override
@@ -140,12 +149,14 @@ public class GamePanel extends JPanel implements Runnable {
             executor.submit(player::update);
             executor.submit(monsterManager::update);
 
-            if (monsterManager.isEmpty()) {
+            if (monsterManager.isEmpty() && isLevelComplete) {
 
                 gameLevelUpCounter++;
 
-                if (gameLevelUpCounter >= 250) {
+                if (gameLevelUpCounter >= 200) {
                     gameLevelUp();
+
+                    gameLevelUpCounter = 0;
                 }
             }
         }
@@ -154,24 +165,26 @@ public class GamePanel extends JPanel implements Runnable {
     public void gameLevelUp() {
 
         gameLevel++;
+        isLevelComplete = false;
 
-        if (gameLevel > maxGameLevel) {
-
-            gameStatus = GameStatus.GAME_WIN;
+        if (gameLevel <= maxGameLevel) {
+            renderUI.currentDialogueMessage = "Level up game. Be careful, you will have \nto fight more stronger monsters.";
         }
         else {
-
-            renderUI.currentDialogueMessage = "Game level up";
-            gameStatus = GameStatus.GAME_DIALOGUE;
-
-            initForNewGameLevel();
+            sound.stop();
+            player.getPressed().lighting = false;
+            renderUI.currentDialogueMessage =
+                    "Congratulations! You have overcome all \nchallenges and defeated every enemy.\nNow, you will return to their beloved island.\nPeace and glory await you!";
         }
+
+        gameStatus = GameStatus.GAME_DIALOGUE;
+
+        initForNewGameLevel();
     }
 
     private void initForNewGameLevel() {
 
-        player.setWorldX(1200);
-        player.setWorldY(1200);
+        AssetSetter.resetPositionOfEntityOnGameLevel(player);
 
         renderUI.messages.clear();
         tileManager.loadMap();
