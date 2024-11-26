@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum WeaponType {
 
-    AXE(1), PICK(2), SWORD(3);
+    AXE(5), PICK(7), SWORD(10);
 
     private final int damage;
 
