@@ -11,6 +11,7 @@ public class KeyPressed {
     public boolean pause;
     public boolean lighting = true;
     public boolean back_slash;
+    public boolean mini_map = true;
 
     public boolean isMovePressed() {
 
