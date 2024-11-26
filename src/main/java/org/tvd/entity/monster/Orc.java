@@ -18,10 +18,10 @@ public class Orc extends Monster {
         super.init();
 
         this.name = "orc";
-        this.maxLife = 15;
+        this.maxLife = 25;
         this.life = maxLife;
         this.speed = 1;
-        this.damage = 2;
+        this.damage = 8;
         this.experienceReward = 10;
 
         EntitySetter.loadDefaultEntityImage(this);

@@ -21,10 +21,10 @@ public class SkeletonLord extends Monster {
         super.init();
 
         this.name = "skeletonlord";
-        this.maxLife = 30;
+        this.maxLife = 80;
         this.life = maxLife;
         this.speed = 1;
-        this.damage = 8;
+        this.damage = 10;
         this.experienceReward = 25;
         this.solidArea = new Rectangle(8, 8, 90, 90);
         this.solidAreaDefaultX = solidArea.x;
