@@ -16,11 +16,11 @@ import org.tvd.frame.GamePanel;
 import org.tvd.frame.GameStatus;
 import org.tvd.item.Tent;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -41,7 +41,7 @@ public class Player extends Entity implements EntityActions {
     private int maxEnergy;
     private int energy;
     private int manas = 1;
-    private int key;
+    private int key = 1;
     private int coin;
     private int maxManas;
 
@@ -50,6 +50,8 @@ public class Player extends Entity implements EntityActions {
     private Tent tent;
 
     private int currentSelectedItem = 0;
+
+    private boolean isUsedKey = false;
 
     // Default index of selected weapon in weapon list
     // + index 0: axe
@@ -70,10 +72,6 @@ public class Player extends Entity implements EntityActions {
 
         this.tent = new Tent(gamePanel);
 
-//        this.weapons.add(WeaponType.AXE);
-        this.weapons.add(WeaponType.PICK);
-        this.weapons.add(WeaponType.SWORD);
-
         this.init();
 
         EntitySetter.loadDefaultEntityImage(this);
@@ -82,19 +80,23 @@ public class Player extends Entity implements EntityActions {
 
     public void init() {
 
+        if (!this.weapons.isEmpty()) {
+            this.weapons.clear();
+        }
         this.speed = 5;
-        this.maxLife = 50;
+        this.maxLife = 70;
         this.life = maxLife;
         this.level = 1;
+        this.key = 1;
+        this.weapons.add(WeaponType.AXE);
         this.weapon = 0;
+        this.isUsedKey = false;
         this.damage = weapons.get(weapon).getDamage();
         this.nextLevelExp = 10;
         this.experience = 0; 
         this.isAlive = true;
         this.maxEnergy = 100;
         this.energy = maxEnergy;
-        this.worldX = FrameAsset.TILE_SIZE * 8;
-        this.worldY = FrameAsset.TILE_SIZE * 7;
     }
 
     @Override
@@ -103,6 +105,7 @@ public class Player extends Entity implements EntityActions {
         super.update();
 
         if (!isAlive) {
+            gamePanel.sound.playSE(2);
             gamePanel.gameStatus = GameStatus.GAME_OVER;
         }
 
@@ -114,7 +117,13 @@ public class Player extends Entity implements EntityActions {
             levelUp();
         }
 
+        if (energy <= 0) {
+            energy = 1;
+            gamePanel.renderUI.addMessage("Find a place to rest!");
+        }
+
         if (isAttacking) {
+
             attacking();
         }
 
@@ -150,9 +159,11 @@ public class Player extends Entity implements EntityActions {
 
         gamePanel.sound.playSE(4);
 
-        if (damage < 4) {
-            damage++;
-        }
+        // if (damage < 4) {
+            // damage++;
+        // }
+
+        energy = maxEnergy;
 
         gamePanel.renderUI.currentDialogueMessage = "You are level " + level + " now!\n"
                 + "You feel stronger!";
@@ -170,6 +181,7 @@ public class Player extends Entity implements EntityActions {
                 isSpeedUp = false;
                 speed -= 2;
                 counter.speedUpCounter = 0;
+                gamePanel.renderUI.addMessage("Speed boost time is over!");
             }
         }
 
@@ -224,7 +236,7 @@ public class Player extends Entity implements EntityActions {
 
     private void collectItem(int itemIndex) {
 
-        if (itemIndex < 0 || itemIndex >= weapons.size()) {
+        if (itemIndex < 0 || itemIndex >= gamePanel.itemManager.size()) {
             return;
         }
 
@@ -236,10 +248,41 @@ public class Player extends Entity implements EntityActions {
         switch (itemName) {
 
             case "coin" -> {
-                // coin
+                coin++;
+                gamePanel.sound.playSE(7);
+                gamePanel.renderUI.addMessage("Coin +1!");
             }
             case "key" -> {
-                // key
+                key++;
+                gamePanel.sound.playSE(8);
+                gamePanel.renderUI.addMessage("Key +1!");
+            }
+            case "mana" -> {
+                manas++;
+                gamePanel.sound.playSE(5);
+                gamePanel.renderUI.addMessage("Mana +1!");
+            }
+            case "stair" -> {
+                if (isUsedKey && gamePanel.monsterManager.isEmpty()) {
+                    isUsedKey = false;
+                    GamePanel.isLevelComplete = true;
+                    gamePanel.renderUI.addMessage("Level complete +1!");
+                    gamePanel.itemManager.set(itemIndex, null);
+                }
+            }
+            case "sword" -> {
+                gamePanel.sound.playSE(9);
+                if (!weapons.contains(WeaponType.SWORD)) {
+                    this.weapons.add(WeaponType.SWORD);
+                    gamePanel.renderUI.addMessage("You have pick up the Sword!");
+                }
+            }
+            case "pick" -> {
+                gamePanel.sound.playSE(9);
+                if (!weapons.contains(WeaponType.PICK)) {
+                    this.weapons.add(WeaponType.PICK);
+                    gamePanel.renderUI.addMessage("You have pick up the Pick!");
+                }
             }
             case "boots" -> {
                 isSpeedUp = true;
@@ -247,9 +290,12 @@ public class Player extends Entity implements EntityActions {
 
                 gamePanel.renderUI.addMessage("Speed up!");
                 gamePanel.sound.playSE(5);
-                gamePanel.itemManager.set(itemIndex, null);
             }
             default -> isSleeping = false;
+        }
+
+        if (!"stair".equals(itemName)) {
+            gamePanel.itemManager.set(itemIndex, null);
         }
     }
 
@@ -263,6 +309,10 @@ public class Player extends Entity implements EntityActions {
                 .get(monsterIndex);
 
         if (monster == null) {
+            return;
+        }
+
+        if (energy <= 1) {
             return;
         }
 
@@ -302,7 +352,7 @@ public class Player extends Entity implements EntityActions {
 
         damage = weapons.get(weapon).getDamage();
         String weaponName = weapons.get(weapon).name();
-        gamePanel.renderUI.addMessage("Change weapon to " + weaponName);
+        gamePanel.renderUI.addMessage("Change weapon to " + weaponName.toLowerCase(Locale.ROOT));
         EntitySetter.loadAttackEntityImage(this, weaponName.toLowerCase());
     }
 
@@ -315,6 +365,9 @@ public class Player extends Entity implements EntityActions {
     public void useKey() {
 
         if (key <= 0) return;
+        if (isUsedKey) return;
+
+        isUsedKey = true;
         key--;
     }
 
@@ -322,8 +375,8 @@ public class Player extends Entity implements EntityActions {
 
         if (energy >= maxEnergy) return;
 
-        if (counter.energyRecoveryCounter == 58) {
-            energy += 1;
+        if (counter.energyRecoveryCounter == 45) {
+            energy += 2;
         }
     }
 
@@ -332,7 +385,7 @@ public class Player extends Entity implements EntityActions {
         if (manas <= 0) return;
         if (life == maxLife) return;
 
-        life += 5;
+        life += 20;
         if (life > maxLife) life = maxLife;
 
         manas--;
@@ -399,15 +452,23 @@ public class Player extends Entity implements EntityActions {
         if (isSleeping) {
             g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0f));
         }
+
         if (isInvincible) {
             g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 0.4f));
         }
+
+        if (life <= 0) {
+            dyingAnimation(g2d);
+        }
+
         g2d.drawImage(image, tempX, tempY, image.getWidth(), image.getHeight(), null);
         g2d.setComposite(AlphaComposite.getInstance( AlphaComposite.SRC_OVER, 1f));
 
         if (isSleeping) {
             BufferedImage tentImage = tent.getDefaultImage();
-            g2d.drawImage(tentImage, tempX - FrameAsset.TILE_SIZE / 2, tempY - FrameAsset.TILE_SIZE / 2, tentImage.getWidth(), tentImage.getHeight(), null);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("z z Z Z", tempX + FrameAsset.TILE_SIZE * 3 / 4, tempY);
+            g2d.drawImage(tentImage, tempX, tempY, tentImage.getWidth(), tentImage.getHeight(), null);
         }
     }
 
@@ -426,4 +487,6 @@ public class Player extends Entity implements EntityActions {
             direction = Direction.RIGHT;
         }
     }
+
+
 }
