@@ -3,7 +3,7 @@ package org.tvd.entity.monster;
 import java.awt.*;
 import java.util.Random;
 
-import org.tvd.entity.Direction;
+import org.tvd.enums.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
 import org.tvd.frame.GamePanel;

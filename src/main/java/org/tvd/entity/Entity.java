@@ -2,7 +2,8 @@ package org.tvd.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.tvd.control.CollisionDetection;
+import org.tvd.enums.Direction;
+import org.tvd.utility.CollisionDetection;
 import org.tvd.frame.GamePanel;
 import org.tvd.setter.FrameAsset;
 

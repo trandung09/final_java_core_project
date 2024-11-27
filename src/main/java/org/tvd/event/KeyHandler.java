@@ -4,9 +4,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import org.tvd.frame.GamePanel;
-import org.tvd.frame.GameStatus;
-import org.tvd.frame.Menu;
-import org.tvd.frame.StageOption;
+import org.tvd.enums.GameStatus;
+import org.tvd.enums.Menu;
+import org.tvd.utility.StageOption;
 
 public class KeyHandler implements KeyListener {
 

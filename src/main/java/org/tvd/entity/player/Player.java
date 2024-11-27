@@ -5,15 +5,15 @@ import lombok.Setter;
 
 import org.tvd.setter.EntitySetter;
 import org.tvd.setter.FrameAsset;
-import org.tvd.entity.Direction;
+import org.tvd.enums.Direction;
 import org.tvd.entity.Entity;
 import org.tvd.entity.EntityActions;
 import org.tvd.entity.monster.Monster;
-import org.tvd.entity.player.weapon.WeaponType;
+import org.tvd.enums.WeaponType;
 import org.tvd.event.KeyHandler;
 import org.tvd.event.KeyPressed;
 import org.tvd.frame.GamePanel;
-import org.tvd.frame.GameStatus;
+import org.tvd.enums.GameStatus;
 import org.tvd.item.Tent;
 
 import java.awt.*;

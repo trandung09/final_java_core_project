@@ -8,22 +8,19 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.server.Skeleton;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.Locale;
 
 import org.tvd.entity.Entity;
 import org.tvd.entity.monster.Bat;
-import org.tvd.entity.monster.Monster;
 import org.tvd.entity.monster.SkeletonLord;
-import org.tvd.entity.player.weapon.WeaponType;
+import org.tvd.enums.WeaponType;
 import org.tvd.item.Stair;
 import org.tvd.item.SuperItem;
 import org.tvd.setter.FrameAsset;
 import org.tvd.frame.GamePanel;
-import org.tvd.frame.Menu;
-import org.tvd.frame.StageOption;
+import org.tvd.enums.Menu;
+import org.tvd.utility.StageOption;
 import org.tvd.utility.StaticImage;
 import org.tvd.utility.UtilityTool;
 

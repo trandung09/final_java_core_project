@@ -36,7 +36,7 @@ public class Lighting {
         int centerX = gamePanel.player.screenX + FrameAsset.TILE_SIZE / 2;
         int centerY = gamePanel.player.screenY + FrameAsset.TILE_SIZE / 2;
 
-        // tam vung sang
+        // tam 444vung sang
         double x = centerX - (double) circleSize / 2;
         double y = centerY - (double) circleSize / 2;
 

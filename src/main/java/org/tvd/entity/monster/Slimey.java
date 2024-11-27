@@ -2,7 +2,7 @@ package org.tvd.entity.monster;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.tvd.entity.Direction;
+import org.tvd.enums.Direction;
 import org.tvd.entity.Projectile;
 import org.tvd.entity.Rock;
 import org.tvd.frame.GamePanel;

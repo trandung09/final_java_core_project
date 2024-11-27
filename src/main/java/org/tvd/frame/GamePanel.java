@@ -1,5 +1,6 @@
 package org.tvd.frame;
 
+import org.tvd.enums.GameStatus;
 import org.tvd.setter.AssetSetter;
 import org.tvd.setter.FrameAsset;
 import org.tvd.entity.monster.MonsterManager;
