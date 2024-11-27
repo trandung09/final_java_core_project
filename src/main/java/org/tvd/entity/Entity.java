@@ -203,14 +203,25 @@ public abstract class Entity {
 
     public void renderHpBar(Graphics2D g2d, int screenX, int screenY) {
 
-        double hpBarScale = (double) FrameAsset.TILE_SIZE / maxLife;
+        int width = this.defaultImages[0].getWidth();
+        double hpBarScale = (double) width / maxLife;
         double hpBar = hpBarScale * life;
 
         g2d.setColor(new Color(35, 35, 35));
-        g2d.fillRect(screenX - 1, screenY - 16, FrameAsset.TILE_SIZE  + 2, 12);
+        if (!isAttacking) {
+            g2d.fillRect(screenX- 1, screenY - 16, width  + 2, 12);
+        }
+        else {
+            g2d.fillRect(screenX + width - 1, screenY - 16, width + 2, 12);
+        }
 
         g2d.setColor(new Color(255, 35, 35));
-        g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
+        if (!isAttacking) {
+            g2d.fillRect(screenX, screenY - 15, (int)hpBar, 10);
+        }
+        else {
+            g2d.fillRect(screenX + width, screenY - 15, (int)hpBar, 10);
+        }
     }
 
     protected void dyingAnimation(Graphics2D g2d) {
